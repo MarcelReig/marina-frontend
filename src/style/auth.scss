@@ -1,0 +1,42 @@
+.auth-page-wrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  height: calc(100vh - 95px);
+
+  .left-column {
+    background-size: cover;
+    min-height: 200px;
+  }
+
+  .right-column {
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: $offwhite;
+    .auth-form-wrapper {
+      @include input-element();
+      @include base-grid();
+      & {
+        grid-gap: 21px;
+      }
+      & {
+        padding: 42px;
+      }
+      .form-group {
+        display: flex;
+        svg {
+          font-size: 2em;
+          color: $teal;
+          margin-right: 15px;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .auth-page-wrapper {
+    grid-template-columns: 1fr 1fr;
+  }
+}

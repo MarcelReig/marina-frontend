@@ -1,0 +1,29 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  width: 100%;
+}
+body {
+  margin: 0px;
+  font-family: "Open Sans", sans-serif;
+  width: 100%;
+}
+.container {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Lora", serif;
+}
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}

@@ -1,0 +1,48 @@
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px;
+
+  .brand-name {
+    font-family: "Water Brush", cursive;
+    font-size: 1.5rem;
+    text-decoration: none;
+    color: black;
+  }
+
+  .navigation-menu {
+    .nav-link-wrapper {
+      height: 18px;
+      transition: 0.5s ease-in-out;
+      margin-right: 20px;
+      font-size: 0.9rem;
+
+      a {
+        color: $grey;
+        text-decoration: none;
+        &:hover {
+          color: black;
+        }
+      }
+
+      .nav-link-active {
+        color: black;
+      }
+    }
+    a.logout {
+      display: flex;
+      height: 30px;
+      width: 30px;
+      cursor: pointer;
+      margin-left: 15px;
+      cursor: pointer;
+      color: $teal;
+      transition: 0.5s ease-in-out;
+
+      &:hover {
+        color: $dark-teal;
+      }
+    }
+  }
+}
