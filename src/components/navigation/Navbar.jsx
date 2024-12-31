@@ -1,8 +1,19 @@
 import { NavLink } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRightFromBracket} from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = ({ loggedInStatus, handleSuccessfulLogout }) => {
+
+  const navigate = useNavigate();
+
+  const handleLogoutClick = () => {
+    handleSuccessfulLogout();
+    navigate("/"); // Redirigir a la página de inicio
+  };
+
   const [isNavExpanded, setIsNavExpanded] = useState(false);
 
   return (
@@ -68,18 +79,34 @@ const Navbar = ({ loggedInStatus, handleSuccessfulLogout }) => {
             </NavLink>
           </li>
           {loggedInStatus === "LOGGED_IN" && (
-          <>
-            <li>
-              <NavLink to="/portfolio-manager">Portfolio Manager</NavLink>
-            </li>
-            <li>
-              <NavLink to="/inventory-manager">Inventory Manager</NavLink>
-            </li>
-          </>
-        )}
-        <li>
-          <button onClick={handleSuccessfulLogout}>Logout</button>
-        </li>
+            <>
+              <li className="nav-link-wrapper">
+                <NavLink
+                  to="/portfolio-manager"
+                  className={({ isActive }) =>
+                    isActive ? "nav-link-active" : ""
+                  }
+                >
+                  Portfolio Manager
+                </NavLink>
+              </li>
+              <li className="nav-link-wrapper">
+                <NavLink
+                  to="/inventory-manager"
+                  className={({ isActive }) =>
+                    isActive ? "nav-link-active" : ""
+                  }
+                >
+                  Inventory Manager
+                </NavLink>
+              </li>
+              <li>
+                <a onClick={handleLogoutClick}>
+                <FontAwesomeIcon icon={faArrowRightFromBracket} />
+                </a>
+              </li>
+            </>
+          )}
         </ul>
       </div>
     </div>
@@ -91,4 +118,3 @@ Navbar.propTypes = {
 };
 
 export default Navbar;
-

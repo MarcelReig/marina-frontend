@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "../navigation/Navbar";
+import Footer from "../footer/Footer";
 import PropTypes from "prop-types";
 
 const LayoutPublic = ({ loggedInStatus, handleSuccessfulLogout }) => {
@@ -12,7 +13,7 @@ const LayoutPublic = ({ loggedInStatus, handleSuccessfulLogout }) => {
       <main>
         <Outlet />
       </main>
-      <footer>Footer</footer>
+      <Footer />
     </>
   );
 }

@@ -8,8 +8,11 @@ import Contact from "../components/pages/Contact";
 import Shop from "../components/pages/Shop";
 import NotFound from "../components/pages/NotFound";
 import PortfolioDetail from "../components/portfolio/PortfolioDetail";
+import PortfolioManager from "../components/pages/PortfolioManager";
+import InventoryManager from "../components/pages/InventoryManager";
 
 const Routes = () => {
+  
   const [loggedInStatus, setLoggedInStatus] = useState("NOT_LOGGED_IN");
 
   const handleSuccessfulLogin = () => {
@@ -61,15 +64,35 @@ const Routes = () => {
           element: <Contact />,
         },
         {
-          path: "/portfolio/:slug", // Define la ruta para los detalles del portafolio
+          path: "/portfolio/:slug", 
           element: <PortfolioDetail />,
         },
+        {
+          path: "/portfolio-manager",
+          element: (
+            <PortfolioManager
+              loggedInStatus={loggedInStatus}
+              handleSuccessfulLogout={handleSuccessfulLogout}
+            />
+          ),
+        },
+        {
+          path: "/inventory-manager",
+          element: (
+            <InventoryManager
+              loggedInStatus={loggedInStatus}
+              handleSuccessfulLogout={handleSuccessfulLogout}
+            />
+          ),
+        }
       ],
     },
-    // Otras rutas principales...
+  
   ]);
 
   return <RouterProvider router={router} />;
 };
+
+
 
 export default Routes;

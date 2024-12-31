@@ -1,3 +1,7 @@
+@use "variables" as *;
+@use "forms" as *;
+@use "mixins" as *;
+
 .auth-page-wrapper {
   display: grid;
   grid-template-columns: 1fr;

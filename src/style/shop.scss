@@ -1,3 +1,6 @@
+@use "variables" as *;
+@use "mixins" as *;
+
 .marina-store {
   display: flex;
   flex-direction: column;
@@ -85,7 +88,9 @@ ul.order li span.count span {
   & {
     display: flex;
   }
-  & {flex-wrap: wrap;}
+  & {
+    flex-wrap: wrap;
+  }
   .product-wrapper {
     display: flex;
     flex-direction: column;
@@ -135,16 +140,18 @@ ul.order li span.count span {
 }
 
 .inventory-form-wrapper {
-  
   @include input-element;
   textarea {
     background: #fff;
     width: 100%;
     margin-bottom: 20px;
   }
-  & {padding: 42px;}
-  & {height: calc(100vh - 95px);}
- 
+  & {
+    padding: 42px;
+  }
+  & {
+    height: calc(100vh - 95px);
+  }
 }
 .add-product-btn {
   margin-top: 20px;

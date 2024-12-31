@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 import Login from "../authentication/Login"
 import loginImg from "../../images/auth/login.jpg";
 
-
 const Auth = ({ handleSuccessfulLogin, handleUnsuccessfulLogin }) => {
   const navigate = useNavigate();
 

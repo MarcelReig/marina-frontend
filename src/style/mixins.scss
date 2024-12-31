@@ -1,3 +1,5 @@
+@use "variables" as *;
+
 @mixin base-btn {
   cursor: pointer;
   height: 42px;

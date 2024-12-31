@@ -14,7 +14,6 @@ function PortfolioContainer() {
         "https://marina-backend.onrender.com/portfolio"
       );
       setPortfolioItems(response.data);
-      console.log("response", response);
     } catch (error) {
       setError(error);
     } finally {

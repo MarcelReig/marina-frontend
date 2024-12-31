@@ -1,3 +1,4 @@
+@use "mixins" as *;
 .portfolio-form-wrapper {
   @include base-grid();
   & {

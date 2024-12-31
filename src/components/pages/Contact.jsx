@@ -40,7 +40,6 @@ const Contact = () => {
             <div className="icon">
               <FontAwesomeIcon icon={faMapMarkerAlt} />
             </div>
-
             <div className="text">Alaior, Menorca</div>
           </div>
         </div>

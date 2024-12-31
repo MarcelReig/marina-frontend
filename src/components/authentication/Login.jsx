@@ -44,7 +44,7 @@ const Login = ({ handleSuccessfulAuth, handleUnsuccessfulAuth }) => {
           }
         })
         .catch(() => {
-          setErrorText("An error occurred");
+          setErrorText("Algo salió mal");
           handleUnsuccessfulAuth();
         });
     },
