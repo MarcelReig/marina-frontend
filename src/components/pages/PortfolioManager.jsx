@@ -1,19 +1,22 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import http from "../../api/http";
 import PortfolioSidebarList from "../portfolio/PortfolioSidebarList";
 import PortfolioForm from "../portfolio/PortfolioForm";
+
 
 const PortfolioManager = () => {
   const [portfolioItems, setPortfolioItems] = useState([]);
 
   const handleDeleteClick = (portfolioItem) => {
-    axios
-      .delete(
-        `https://marina-backend.onrender.com/portfolio/${portfolioItem._id.$oid}`
-      )
+    const id = typeof portfolioItem._id === 'object' ? portfolioItem._id.$oid : portfolioItem._id;
+    http
+      .delete(`/portfolio/${id}`)
       .then(() => {
         setPortfolioItems((prevItems) =>
-          prevItems.filter((item) => item._id.$oid !== portfolioItem._id.$oid)
+          prevItems.filter((item) => {
+            const itemId = typeof item._id === 'object' ? item._id.$oid : item._id;
+            return itemId !== id;
+          })
         );
       })
       .catch((error) => {
@@ -30,8 +33,8 @@ const PortfolioManager = () => {
   };
 
   const getPortfolioItems = () => {
-    axios
-      .get("https://marina-backend.onrender.com/portfolio")
+    http
+      .get(`/portfolio`)
       .then((response) => {
         setPortfolioItems(response.data);
       })

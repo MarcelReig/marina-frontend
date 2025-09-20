@@ -1,5 +1,6 @@
-import { useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { AuthProvider } from "../context/AuthContext";
+import ProtectedRoute from "./ProtectedRoute";
 import LayoutPublic from "../components/layout/LayoutPublic";
 import App from "../App";
 import Auth from "../components/pages/Auth";
@@ -9,32 +10,17 @@ import Shop from "../components/pages/Shop";
 import NotFound from "../components/pages/NotFound";
 import PortfolioDetail from "../components/portfolio/PortfolioDetail";
 import PortfolioManager from "../components/pages/PortfolioManager";
+import PortfolioEdit from "../components/pages/PortfolioEdit";
 import InventoryManager from "../components/pages/InventoryManager";
 
 const Routes = () => {
-  
-  const [loggedInStatus, setLoggedInStatus] = useState("NOT_LOGGED_IN");
-
-  const handleSuccessfulLogin = () => {
-    setLoggedInStatus("LOGGED_IN");
-  };
-
-  const handleUnsuccessfulLogin = () => {
-    setLoggedInStatus("NOT_LOGGED_IN");
-  };
-
-  const handleSuccessfulLogout = () => {
-    setLoggedInStatus("NOT_LOGGED_IN");
-  };
-
   const router = createBrowserRouter([
     {
       path: "/",
       element: (
-        <LayoutPublic
-          loggedInStatus={loggedInStatus}
-          handleSuccessfulLogout={handleSuccessfulLogout}
-        />
+        <AuthProvider>
+          <LayoutPublic />
+        </AuthProvider>
       ),
       errorElement: <NotFound />,
       children: [
@@ -44,12 +30,7 @@ const Routes = () => {
         },
         {
           path: "/auth",
-          element: (
-            <Auth
-              handleSuccessfulLogin={handleSuccessfulLogin}
-              handleUnsuccessfulLogin={handleUnsuccessfulLogin}
-            />
-          ),
+          element: <Auth />,
         },
         {
           path: "/about",
@@ -64,27 +45,26 @@ const Routes = () => {
           element: <Contact />,
         },
         {
-          path: "/portfolio/:slug", 
+          path: "/portfolio/:id", 
           element: <PortfolioDetail />,
         },
         {
-          path: "/portfolio-manager",
-          element: (
-            <PortfolioManager
-              loggedInStatus={loggedInStatus}
-              handleSuccessfulLogout={handleSuccessfulLogout}
-            />
-          ),
+          element: <ProtectedRoute allowRoles={["admin", "super_admin"]} />,
+          children: [
+            {
+              path: "/portfolio-manager",
+              element: <PortfolioManager />,
+            },
+            {
+              path: "/portfolio-manager/edit/:id",
+              element: <PortfolioEdit />,
+            },
+            {
+              path: "/inventory-manager",
+              element: <InventoryManager />,
+            },
+          ],
         },
-        {
-          path: "/inventory-manager",
-          element: (
-            <InventoryManager
-              loggedInStatus={loggedInStatus}
-              handleSuccessfulLogout={handleSuccessfulLogout}
-            />
-          ),
-        }
       ],
     },
   

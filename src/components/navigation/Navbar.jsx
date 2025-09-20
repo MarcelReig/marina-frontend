@@ -2,16 +2,17 @@ import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRightFromBracket} from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
-import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
+import useAuth from "../../context/useAuth";
 
-const Navbar = ({ loggedInStatus, handleSuccessfulLogout }) => {
+const Navbar = () => {
+  const { isAuthenticated, logout } = useAuth();
 
   const navigate = useNavigate();
 
   const handleLogoutClick = () => {
-    handleSuccessfulLogout();
-    navigate("/"); // Redirigir a la página de inicio
+    logout();
+    navigate("/"); // Redirect to home page
   };
 
   const [isNavExpanded, setIsNavExpanded] = useState(false);
@@ -78,7 +79,7 @@ const Navbar = ({ loggedInStatus, handleSuccessfulLogout }) => {
               Contact
             </NavLink>
           </li>
-          {loggedInStatus === "LOGGED_IN" && (
+          {isAuthenticated && (
             <>
               <li className="nav-link-wrapper">
                 <NavLink
@@ -111,10 +112,6 @@ const Navbar = ({ loggedInStatus, handleSuccessfulLogout }) => {
       </div>
     </div>
   );
-};
-Navbar.propTypes = {
-  loggedInStatus: PropTypes.string.isRequired,
-  handleSuccessfulLogout: PropTypes.func.isRequired,
 };
 
 export default Navbar;

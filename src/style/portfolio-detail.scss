@@ -1,19 +1,254 @@
 .portfolio-detail-wrapper {
   width: 100%;
+  min-height: 100vh;
+
+  // Navigation
+  .portfolio-detail-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+
+    .back-button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      border: 1px solid #ddd;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: #333;
+
+      &:hover {
+        background: #f5f5f5;
+        border-color: #999;
+      }
+
+      svg {
+        font-size: 0.9em;
+      }
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9em;
+      color: #666;
+
+      a {
+        color: #0066cc;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+
+      .separator {
+        color: #999;
+      }
+
+      .current {
+        font-weight: 500;
+        color: #333;
+      }
+    }
+  }
+
+  // Header
   .portfolio-detail-header {
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 200px;
-    align-items: center;
-    box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.1);
+    padding: 60px 40px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+
+    h1 {
+      font-size: 2.5em;
+      margin: 0 0 20px 0;
+      color: #333;
+      font-weight: 300;
+    }
 
     .description {
-      width: 700px;
-      font-size: 2em;
-      margin-bottom: 50px;
+      max-width: 800px;
+      margin: 0 auto 20px auto;
+      font-size: 1.2em;
+      line-height: 1.6;
+      color: #666;
+    }
+
+    .photo-count {
+      margin: 0;
+      font-size: 0.9em;
+      color: #888;
+      font-style: italic;
+    }
+  }
+
+  // Gallery
+  .portfolio-gallery {
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    // Make images clickable with cursor pointer
+    .react-photo-album--photo {
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border-radius: 4px;
+      overflow: hidden;
+
+      &:hover {
+        transform: scale(1.02);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        z-index: 1;
+      }
+
+      img {
+        transition: filter 0.2s ease;
+      }
+
+      &:hover img {
+        filter: brightness(1.1);
+      }
+    }
+  }
+
+  // States
+  .loading-state,
+  .error-state,
+  .empty-state,
+  .empty-gallery {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 40px;
+    text-align: center;
+    min-height: 400px;
+
+    h2 {
+      margin: 20px 0 10px 0;
+      color: #333;
+      font-weight: 300;
+    }
+
+    p {
+      color: #666;
+      margin-bottom: 30px;
+      max-width: 500px;
+      line-height: 1.6;
+    }
+  }
+
+  .loading-state {
+    svg {
+      color: #0066cc;
+      margin-bottom: 20px;
+    }
+  }
+
+  .error-state {
+    .error-actions {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+
+      &:not(.btn-secondary) {
+        background: #0066cc;
+        color: white;
+
+        &:hover {
+          background: #0052a3;
+        }
+      }
+
+      &.btn-secondary {
+        background: #6c757d;
+        color: white;
+
+        &:hover {
+          background: #545b62;
+        }
+      }
+    }
+  }
+
+  .empty-gallery {
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    margin: 40px;
+    min-height: 200px;
+
+    p {
+      color: #6c757d;
+      font-style: italic;
+    }
+  }
+
+  // Responsive
+  @media (max-width: 768px) {
+    .portfolio-detail-navigation {
+      padding: 15px 20px;
+      flex-direction: column;
+      gap: 15px;
+
+      .breadcrumb {
+        font-size: 0.8em;
+      }
+    }
+
+    .portfolio-detail-header {
+      padding: 40px 20px;
+
+      h1 {
+        font-size: 2em;
+      }
+
+      .description {
+        font-size: 1.1em;
+      }
+    }
+
+    .portfolio-gallery {
+      padding: 20px;
+    }
+
+    .loading-state,
+    .error-state,
+    .empty-state,
+    .empty-gallery {
+      padding: 40px 20px;
+      min-height: 300px;
+    }
+
+    .error-state .error-actions {
+      flex-direction: column;
+
+      .btn {
+        width: 100%;
+        max-width: 200px;
+      }
     }
   }
 }
-

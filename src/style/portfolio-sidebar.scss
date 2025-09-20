@@ -18,16 +18,73 @@
         font-size: 1.5em;
       }
 
+      .price {
+        color: $offwhite;
+        font-size: 1.5em;
+      }
+
+      .action-icons {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .edit-icon,
       .delete-icon {
         cursor: pointer;
         color: $offwhite;
-        font-size: 1.5em;
+        font-size: 1.2em;
         transition: 0.5s ease-in-out;
+        background: transparent;
+        border: none;
+        padding: 5px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        outline: none;
+        border-radius: 3px;
 
         &:hover {
-          color: $warning;
+          background: rgba(255, 255, 255, 0.1);
         }
       }
+
+      .edit-icon:hover {
+        color: #3498db;
+      }
+
+      .delete-icon:hover {
+        color: $warning;
+      }
     }
+  }
+}
+
+.no-items {
+  padding: 30px 20px;
+  text-align: center;
+}
+
+.empty-message {
+  color: #888;
+  text-align: center;
+  font-style: italic;
+  margin: 0;
+}
+
+.sidebar-header {
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 10px;
+
+  h3 {
+    color: $offwhite;
+    margin: 0 0 5px 0;
+    font-size: 1.2em;
+  }
+
+  small {
+    color: #888;
+    font-style: italic;
   }
 }

@@ -1,20 +1,18 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import PropTypes from "prop-types";
 import Login from "../authentication/Login"
 import loginImg from "../../images/auth/login.jpg";
 
-const Auth = ({ handleSuccessfulLogin, handleUnsuccessfulLogin }) => {
+const Auth = () => {
   const navigate = useNavigate();
 
   const handleSuccessfulAuth = useCallback(() => {
-    handleSuccessfulLogin();
     navigate("/");
-  }, [handleSuccessfulLogin, navigate]);
+  }, [navigate]);
 
   const handleUnsuccessfulAuth = useCallback(() => {
-    handleUnsuccessfulLogin();
-  }, [handleUnsuccessfulLogin]);
+    // noop; Login shows errors
+  }, []);
 
   return (
     <div className="auth-page-wrapper">
@@ -33,12 +31,6 @@ const Auth = ({ handleSuccessfulLogin, handleUnsuccessfulLogin }) => {
       </div>
     </div>
   );
-};
-
-// Validación de props usando PropTypes
-Auth.propTypes = {
-  handleSuccessfulLogin: PropTypes.func.isRequired,
-  handleUnsuccessfulLogin: PropTypes.func.isRequired,
 };
 
 export default Auth;

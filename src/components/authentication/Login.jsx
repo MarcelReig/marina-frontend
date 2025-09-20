@@ -1,10 +1,14 @@
 import { useState, useCallback } from "react";
 import PropTypes from "prop-types";
-import axios from "axios";
+import http from "../../api/http";
+import useAuth from "../../context/useAuth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
 
+// Base URL handled by http client
+
 const Login = ({ handleSuccessfulAuth, handleUnsuccessfulAuth }) => {
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorText, setErrorText] = useState("");
@@ -22,22 +26,20 @@ const Login = ({ handleSuccessfulAuth, handleUnsuccessfulAuth }) => {
   const handleSubmit = useCallback(
     (event) => {
       event.preventDefault();
-      let doENV = "https://marina-backend.onrender.com/token";
-      axios
+      http
         .post(
-          doENV,
+          `/token`,
           {
             email,
             password,
-          },
-          { withCredentials: true }
+          }
         )
         .then((response) => {
           if (response.status === 200) {
+            // Persist token and user in AuthContext + sessionStorage
+            login(response.data.access_token, response.data.user);
             handleSuccessfulAuth();
             console.log("this came from the backend", response);
-            // Almacenar token en navegador
-            sessionStorage.setItem("token", response.data.access_token);
           } else {
             setErrorText("Wrong email or password");
             handleUnsuccessfulAuth();
@@ -48,7 +50,7 @@ const Login = ({ handleSuccessfulAuth, handleUnsuccessfulAuth }) => {
           handleUnsuccessfulAuth();
         });
     },
-    [email, password, handleSuccessfulAuth, handleUnsuccessfulAuth]
+    [email, password, handleSuccessfulAuth, handleUnsuccessfulAuth, login]
   );
 
   return (
@@ -59,7 +61,7 @@ const Login = ({ handleSuccessfulAuth, handleUnsuccessfulAuth }) => {
 
       <form onSubmit={handleSubmit} className="auth-form-wrapper">
         <div className="form-group">
-        <FontAwesomeIcon icon={faEnvelope} />
+          <FontAwesomeIcon icon={faEnvelope} />
           <input
             type="email"
             name="email"
@@ -69,7 +71,7 @@ const Login = ({ handleSuccessfulAuth, handleUnsuccessfulAuth }) => {
           />
         </div>
         <div className="form-group">
-        <FontAwesomeIcon icon={faLock} />
+          <FontAwesomeIcon icon={faLock} />
           <input
             type="password"
             name="password"

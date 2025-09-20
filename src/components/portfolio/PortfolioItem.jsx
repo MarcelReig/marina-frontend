@@ -17,7 +17,7 @@ const PortfolioItem = ({ item }) => {
   const { _id, thumb_img_url, name } = item;
 
   return (
-    <Link to={`/portfolio/${_id.$oid}`}>
+    <Link to={`/portfolio/${_id?.$oid || _id}`}>
       <div
         className="portfolio-item-wrapper"
         onMouseEnter={handleMouseEnter}

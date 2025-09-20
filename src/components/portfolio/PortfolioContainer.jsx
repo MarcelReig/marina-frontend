@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import http from "../../api/http";
 
 import PortfolioItem from "./PortfolioItem";
+import SkeletonPortfolio from "../skeletons/SkeletonPortfolio";
+
 
 function PortfolioContainer() {
   const [portfolioItems, setPortfolioItems] = useState([]);
@@ -10,9 +12,7 @@ function PortfolioContainer() {
 
   const getPortfolioItems = async () => {
     try {
-      const response = await axios.get(
-        "https://marina-backend.onrender.com/portfolio"
-      );
+      const response = await http.get(`/portfolio`);
       setPortfolioItems(response.data);
     } catch (error) {
       setError(error);
@@ -26,7 +26,16 @@ function PortfolioContainer() {
   }, []); // Se ejecuta solo una vez al montar el componente
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="portfolio-items-wrapper">
+        <SkeletonPortfolio />
+        <SkeletonPortfolio />
+        <SkeletonPortfolio />
+        <SkeletonPortfolio />
+        <SkeletonPortfolio />
+        <SkeletonPortfolio />
+      </div>
+    );
   }
 
   if (error) {
@@ -36,12 +45,8 @@ function PortfolioContainer() {
   return (
     <div className="portfolio-items-wrapper">
       {portfolioItems.map((item) => {
-        return (
-          <PortfolioItem
-            key={item._id.$oid}
-            item={item}
-          />
-        );
+        const id = item._id && item._id.$oid ? item._id.$oid : item._id;
+        return <PortfolioItem key={id} item={item} />;
       })}
     </div>
   );

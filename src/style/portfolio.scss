@@ -9,14 +9,25 @@
   a {
     text-decoration: none;
     color: $charcoal;
-    transition: 0.4s ease-in-out;
+    transition: color 0.2s ease;
+    display: block;
+
     &:hover {
       color: $grey;
     }
   }
   .portfolio-item-wrapper {
     text-align: center;
-    background-color: black;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    background-color: white;
+    transition: box-shadow 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
     .portfolio-img-background {
       background-size: cover;
       background-position: center;
@@ -24,40 +35,47 @@
       height: 350px;
       width: 100%;
       mix-blend-mode: luminosity;
+      transition: mix-blend-mode 0.3s ease;
+
       &:hover {
         mix-blend-mode: unset;
       }
     }
-    .collection-title {
+
+    .collection-title-wrapper {
       background-color: white;
     }
+
     .collection-title {
       font-size: 0.9rem;
       font-weight: 400;
-      margin-top: 0;
-      padding-top: 20px;
+      margin: 0;
+      padding: 20px;
+      transition: color 0.2s ease;
     }
   }
 }
 .image-blur {
-  transition: 1s;
   mix-blend-mode: unset !important;
 }
 
 @media (min-width: 576px) {
   .portfolio-items-wrapper {
     grid-template-columns: 1fr 1fr;
+    gap: 25px;
   }
 }
 
 @media (min-width: 992px) {
   .portfolio-items-wrapper {
     grid-template-columns: 1fr 1fr 1fr;
+    gap: 30px;
   }
 }
 
 @media (min-width: 1200px) {
   .portfolio-items-wrapper {
     margin: 0 10vw 100px;
+    gap: 35px;
   }
 }
