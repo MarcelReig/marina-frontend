@@ -1,6 +1,5 @@
 @use "variables" as *;
 
-
 textarea {
   border: 1px solid $teal;
   background-color: transparent;
@@ -10,4 +9,10 @@ textarea {
   padding: 10px;
 }
 
-
+/* Inline field error helper */
+.field-error {
+  color: $warning;
+  display: block;
+  margin-top: 6px;
+  font-size: 0.85rem;
+}

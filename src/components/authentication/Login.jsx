@@ -8,7 +8,7 @@ import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
 // Base URL handled by http client
 
 const Login = ({ handleSuccessfulAuth, handleUnsuccessfulAuth }) => {
-  const { login } = useAuth();
+  const authCtx = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorText, setErrorText] = useState("");
@@ -35,11 +35,17 @@ const Login = ({ handleSuccessfulAuth, handleUnsuccessfulAuth }) => {
           }
         )
         .then((response) => {
-          if (response.status === 200) {
-            // Persist token and user in AuthContext + sessionStorage
-            login(response.data.access_token, response.data.user);
+          if (response?.status === 200 && response?.data?.access_token && (authCtx?.loginWithRefresh || authCtx?.login)) {
+            const access = response.data.access_token;
+            const refresh = response.data.refresh_token;
+            const user = response.data.user || null;
+            // Persist tokens and user in AuthContext + sessionStorage
+            if (authCtx?.loginWithRefresh) {
+              authCtx.loginWithRefresh(access, refresh, user);
+            } else {
+              authCtx.login(access, user);
+            }
             handleSuccessfulAuth();
-            console.log("this came from the backend", response);
           } else {
             setErrorText("Wrong email or password");
             handleUnsuccessfulAuth();
@@ -50,7 +56,7 @@ const Login = ({ handleSuccessfulAuth, handleUnsuccessfulAuth }) => {
           handleUnsuccessfulAuth();
         });
     },
-    [email, password, handleSuccessfulAuth, handleUnsuccessfulAuth, login]
+    [email, password, handleSuccessfulAuth, handleUnsuccessfulAuth, authCtx]
   );
 
   return (

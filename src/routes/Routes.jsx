@@ -12,6 +12,7 @@ import PortfolioDetail from "../components/portfolio/PortfolioDetail";
 import PortfolioManager from "../components/pages/PortfolioManager";
 import PortfolioEdit from "../components/pages/PortfolioEdit";
 import InventoryManager from "../components/pages/InventoryManager";
+import InventoryEdit from "../components/pages/InventoryEdit";
 
 const Routes = () => {
   const router = createBrowserRouter([
@@ -62,6 +63,10 @@ const Routes = () => {
             {
               path: "/inventory-manager",
               element: <InventoryManager />,
+            },
+            {
+              path: "/inventory-manager/edit/:id",
+              element: <InventoryEdit />,
             },
           ],
         },

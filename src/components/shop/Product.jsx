@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import { memo } from "react";
 import { formatPrice } from "../../utils/formatPrice";
 
 const Product = ({ details, onAddToOrder, index }) => {
@@ -7,7 +8,16 @@ const Product = ({ details, onAddToOrder, index }) => {
   return (
     <li className="menu-product">
       <div className="product-wrapper">
-        <img src={image} alt={name} />
+        <img
+          src={image}
+          alt={name}
+          loading="lazy"
+          decoding="async"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = "/vite.svg"; // simple placeholder
+          }}
+        />
 
         <div className="right-stuff">
           <div className="title-wrapper">
@@ -37,6 +47,6 @@ Product.propTypes = {
   index: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 };
 
-export default Product;
+export default memo(Product);
 
 

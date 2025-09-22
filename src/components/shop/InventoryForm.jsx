@@ -1,9 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import PropTypes from 'prop-types';
 import http from '../../api/http';
+import { toast } from 'react-hot-toast';
 
-const InventoryForm = ({ onSuccessfulSubmission, onFormSubmissionError }) => {
+const InventoryForm = ({ onSuccessfulSubmission, onFormSubmissionError, editMode = false, initialData = null, onCancel = null }) => {
   const [formData, setFormData] = useState({
     name: '',
     price: '',
@@ -11,6 +12,19 @@ const InventoryForm = ({ onSuccessfulSubmission, onFormSubmissionError }) => {
     image: null
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  // Load initial data in edit mode
+  useEffect(() => {
+    if (editMode && initialData) {
+      setFormData({
+        name: initialData.name || '',
+        price: initialData.price ? (initialData.price / 100).toFixed(2) : '', // Convert cents to euros
+        description: initialData.description || '',
+        image: initialData.image ? { dataURL: initialData.image } : null
+      });
+    }
+  }, [editMode, initialData]);
 
   const onDrop = (acceptedFiles) => {
     if (acceptedFiles.length > 0) {
@@ -70,35 +84,57 @@ const InventoryForm = ({ onSuccessfulSubmission, onFormSubmissionError }) => {
       ...prev,
       [name]: value
     }));
+    setErrors(prev => ({ ...prev, [name]: undefined }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.name || !formData.price || !formData.description || !formData.image) {
-      onFormSubmissionError?.('Todos los campos son obligatorios');
-      return;
-    }
+    const newErrors = {};
+    if (!formData.name) newErrors.name = 'El nombre es obligatorio';
+    if (!formData.price) newErrors.price = 'El precio es obligatorio';
+    if (!formData.description) newErrors.description = 'La descripción es obligatoria';
+    if (!formData.image) newErrors.image = 'La imagen es obligatoria';
+    if (Object.keys(newErrors).length) { setErrors(newErrors); return; }
 
     setIsSubmitting(true);
 
     try {
-      const response = await http.post('/store', {
+      const payload = {
         name: formData.name,
         description: formData.description,
-        image: formData.image.dataURL,
-        price: Math.round(parseFloat(formData.price) * 100) // Convertir euros a céntimos
-      });
+        price: Math.round(parseFloat(formData.price) * 100) // Convert euros to cents
+      };
+
+      // Only send image if it's new (base64) or if we're creating a new product
+      if (!editMode || (formData.image && formData.image.dataURL && formData.image.dataURL.startsWith('data:image'))) {
+        payload.image = formData.image.dataURL;
+      } else if (editMode && formData.image && formData.image.dataURL) {
+        payload.image = formData.image.dataURL; // Keep existing URL
+      }
+
+      const response = await toast.promise(
+        editMode && initialData
+          ? http.put(`/store/${initialData._id}`, payload)
+          : http.post('/store', payload),
+        {
+          loading: editMode ? 'Actualizando producto...' : 'Guardando producto...',
+          success: editMode ? 'Producto actualizado' : 'Producto creado',
+          error: editMode ? 'No se pudo actualizar el producto' : 'No se pudo crear el producto',
+        }
+      );
 
       onSuccessfulSubmission?.(response.data);
 
-      // Reset form
-      setFormData({
-        name: '',
-        price: '',
-        description: '',
-        image: null
-      });
+      // Reset form only if not in edit mode
+      if (!editMode) {
+        setFormData({
+          name: '',
+          price: '',
+          description: '',
+          image: null
+        });
+      }
 
       // Clear dropzone preview by resetting input (react-dropzone keeps no files, preview is from state)
 
@@ -112,7 +148,7 @@ const InventoryForm = ({ onSuccessfulSubmission, onFormSubmissionError }) => {
 
   return (
     <form onSubmit={handleSubmit} className="portfolio-form-wrapper">
-      <h2>Inventory Manager</h2>
+      <h2>{editMode ? 'Editar Producto' : 'Inventory Manager'}</h2>
       
       <div className="one-column">
         <input
@@ -123,6 +159,7 @@ const InventoryForm = ({ onSuccessfulSubmission, onFormSubmissionError }) => {
           onChange={handleChange}
           required
         />
+        {errors.name && <small className="field-error" aria-live="polite">{errors.name}</small>}
       </div>
 
       <div className="one-column">
@@ -136,6 +173,7 @@ const InventoryForm = ({ onSuccessfulSubmission, onFormSubmissionError }) => {
           step="0.01"
           required
         />
+        {errors.price && <small className="field-error" aria-live="polite">{errors.price}</small>}
       </div>
 
       <div className="one-column">
@@ -146,6 +184,7 @@ const InventoryForm = ({ onSuccessfulSubmission, onFormSubmissionError }) => {
           onChange={handleChange}
           required
         />
+        {errors.description && <small className="field-error" aria-live="polite">{errors.description}</small>}
       </div>
 
       <div className="image-uploaders">
@@ -164,23 +203,37 @@ const InventoryForm = ({ onSuccessfulSubmission, onFormSubmissionError }) => {
                   alt="Preview"
                   style={{ maxWidth: '200px', maxHeight: '200px' }}
                 />
-                <p>Arrastra otra imagen para reemplazar</p>
+                <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+                  <p style={{ margin: 0, flex: 1 }}>Arrastra otra imagen para reemplazar</p>
+                  <button type="button" className="btn secondary" onClick={() => setFormData(prev => ({ ...prev, image: null }))}>
+                    Quitar
+                  </button>
+                </div>
               </div>
             ) : (
               <p>Arrastra aquí la imagen del producto o haz clic para seleccionar</p>
             )}
           </div>
         </div>
+        {errors.image && <small className="field-error" aria-live="polite">{errors.image}</small>}
       </div>
 
-      <div>
+      <div className="form-actions">
         <button 
           className="btn" 
           type="submit" 
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Creando...' : 'Añadir producto'}
+          {isSubmitting 
+            ? (editMode ? 'Actualizando...' : 'Creando...') 
+            : (editMode ? 'Actualizar producto' : 'Añadir producto')
+          }
         </button>
+        {editMode && onCancel && (
+          <button type="button" className="btn secondary" onClick={onCancel}>
+            Cancelar
+          </button>
+        )}
       </div>
     </form>
   );
@@ -189,6 +242,9 @@ const InventoryForm = ({ onSuccessfulSubmission, onFormSubmissionError }) => {
 InventoryForm.propTypes = {
   onSuccessfulSubmission: PropTypes.func,
   onFormSubmissionError: PropTypes.func,
+  editMode: PropTypes.bool,
+  initialData: PropTypes.object,
+  onCancel: PropTypes.func,
 };
 
 export default InventoryForm;

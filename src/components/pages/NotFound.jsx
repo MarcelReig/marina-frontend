@@ -5,11 +5,17 @@ function NotFound() {
   console.log(error);
 
   return (
-    <div>
-      <h1>Oops!</h1>
-      <p>Sorry, an unexpected error has occurred.</p>
-      <p>{error.statusText || error.message}</p>
-      <Link to="/">Volver a la Home</Link>
+    <div className="error-page">
+      <div className="error-content">
+        <h1>¡Oops!</h1>
+        <p>Lo sentimos, ha ocurrido un error inesperado.</p>
+        <div className="error-details">
+          <code>{error.statusText || error.message}</code>
+        </div>
+        <Link to="/" className="btn">
+          Volver a la Home
+        </Link>
+      </div>
     </div>
   );
 }

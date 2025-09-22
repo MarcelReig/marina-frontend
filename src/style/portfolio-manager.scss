@@ -3,12 +3,18 @@
 .manager-wrapper {
   display: grid;
   grid-template-columns: 3fr 1fr;
+  min-height: calc(100vh - 95px);
 
   .left-column {
     background-color: $offwhite;
+    overflow-y: auto;
   }
 
   .right-column {
     background-color: $charcoal;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
   }
 }

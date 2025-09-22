@@ -1,4 +1,152 @@
 @use "variables" as *;
+/* Confirm Dialog - BEM */
+.confirm-dialog {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.confirm-dialog__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.confirm-dialog__content {
+  position: relative;
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: min(90vw, 420px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  transform: scale(1);
+  animation: modalAppear 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.confirm-dialog__title {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.confirm-dialog__message {
+  margin: 0 0 1.5rem 0;
+  color: #555;
+  line-height: 1.5;
+}
+
+.confirm-dialog__actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.confirm-dialog__btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 80px;
+
+  &--primary {
+    background: #e74c3c;
+    color: white;
+
+    &:hover {
+      background: #c0392b;
+    }
+
+    &:focus {
+      outline: 2px solid #e74c3c;
+      outline-offset: 2px;
+    }
+  }
+
+  &--secondary {
+    background: #ecf0f1;
+    color: #2c3e50;
+
+    &:hover {
+      background: #d5dbdb;
+    }
+
+    &:focus {
+      outline: 2px solid #95a5a6;
+      outline-offset: 2px;
+    }
+  }
+}
+
+@keyframes modalAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Error page styles */
+.error-page {
+  min-height: calc(100vh - 95px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: #f8f9fa;
+}
+
+.error-content {
+  text-align: center;
+  max-width: 500px;
+  padding: 3rem 2rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.error-content h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #e74c3c;
+}
+
+.error-content p {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  color: #666;
+}
+
+.error-details {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 1rem;
+  margin: 1.5rem 0;
+}
+
+.error-details code {
+  font-family: "Courier New", monospace;
+  font-size: 0.9rem;
+  color: #e74c3c;
+  word-break: break-word;
+}
+
+.error-content .btn {
+  margin-top: 1rem;
+  padding: 0.75rem 2rem;
+  text-decoration: none;
+  display: inline-block;
+}
 .content-page-wrapper {
   width: 100vw;
   display: grid;

@@ -4,35 +4,35 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
 const PortfolioItem = ({ item }) => {
-  const [portfolioItemClass, setPortfolioItemClass] = useState("");
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = () => {
-    setPortfolioItemClass("image-blur");
+    setIsHovered(true);
   };
 
   const handleMouseLeave = () => {
-    setPortfolioItemClass("");
+    setIsHovered(false);
   };
 
   const { _id, thumb_img_url, name } = item;
 
   return (
-    <Link to={`/portfolio/${_id?.$oid || _id}`}>
-      <div
-        className="portfolio-item-wrapper"
+    <Link to={`/portfolio/${_id?.$oid || _id}`} className="portfolio-card-link">
+      <article
+        className={`portfolio-card ${isHovered ? 'portfolio-card--hovered' : ''}`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
         <div
-          className={"portfolio-img-background " + portfolioItemClass}
+          className="portfolio-card__image"
           style={{
-            backgroundImage: "url(" + thumb_img_url + ")",
+            backgroundImage: `url(${thumb_img_url})`,
           }}
         />
-        <div className="collection-title-wrapper">
-          <h2 className="collection-title">{name}</h2>
+        <div className="portfolio-card__overlay">
+          <h2 className="portfolio-card__title">{name}</h2>
         </div>
-      </div>
+      </article>
     </Link>
   );
 };

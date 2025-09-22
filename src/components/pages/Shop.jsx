@@ -5,6 +5,7 @@ import Header from "../shop/Header";
 import Product from "../shop/Product";
 import Order from "../shop/Order";
 import SkeletonShop from "../skeletons/SkeletonShop";
+import { toast } from 'react-hot-toast';
 
 function Shop() {
   const [isLoading, setIsLoading] = useState(true);
@@ -26,6 +27,30 @@ function Shop() {
     };
   }, []);
 
+  // Rehydrate cart from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem("marina_shop_order");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === "object") {
+          setOrder(parsed);
+        }
+      }
+    } catch (_) {
+      // ignore malformed storage
+    }
+  }, []);
+
+  // Persist cart to localStorage when it changes
+  useEffect(() => {
+    try {
+      window.localStorage.setItem("marina_shop_order", JSON.stringify(order || {}));
+    } catch (_) {
+      // storage quota errors ignored gracefully
+    }
+  }, [order]);
+
   const productsMap = useMemo(() => {
     // Normalize into map keyed by index string for simplicity
     const map = {};
@@ -37,6 +62,7 @@ function Shop() {
 
   const addToOrder = (key) => {
     setOrder((prev) => ({ ...prev, [key]: (prev[key] || 0) + 1 }));
+    toast.success('Añadido al carrito');
   };
 
   const removeFromOrder = (key) => {
@@ -44,6 +70,26 @@ function Shop() {
       const next = { ...prev };
       delete next[key];
       return next;
+    });
+    toast.success('Producto eliminado');
+  };
+
+  const incrementItem = (key) => {
+    setOrder((prev) => ({ ...prev, [key]: (prev[key] || 0) + 1 }));
+    toast.success('Cantidad aumentada');
+  };
+
+  const decrementItem = (key) => {
+    setOrder((prev) => {
+      const current = prev[key] || 0;
+      if (current <= 1) {
+        const next = { ...prev };
+        delete next[key];
+        toast.success('Producto eliminado');
+        return next;
+      }
+      toast.success('Cantidad reducida');
+      return { ...prev, [key]: current - 1 };
     });
   };
 
@@ -59,7 +105,13 @@ function Shop() {
           <SkeletonShop />
           <SkeletonShop />
         </div>
-        <Order products={productsMap} order={order} onRemoveFromOrder={removeFromOrder} />
+        <Order
+          products={productsMap}
+          order={order}
+          onRemoveFromOrder={removeFromOrder}
+          onIncrement={incrementItem}
+          onDecrement={decrementItem}
+        />
       </div>
     );
   }
@@ -74,7 +126,13 @@ function Shop() {
           ))}
         </ul>
       </div>
-      <Order products={productsMap} order={order} onRemoveFromOrder={removeFromOrder} />
+      <Order
+        products={productsMap}
+        order={order}
+        onRemoveFromOrder={removeFromOrder}
+        onIncrement={incrementItem}
+        onDecrement={decrementItem}
+      />
     </div>
   );
 }

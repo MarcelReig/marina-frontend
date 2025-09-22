@@ -244,15 +244,15 @@ const PortfolioDetail = () => {
       </div>
 
       {/* Header */}
-      <div className="portfolio-detail-header">
-        <h1>{name}</h1>
-        {description && <p className="description">{description}</p>}
+      <header className="portfolio-detail-header">
+        <h1 className="portfolio-detail-header__title">{name}</h1>
+        {description && <p className="portfolio-detail-header__description">{description}</p>}
         {photos.length > 0 && (
-          <p className="photo-count">
+          <p className="portfolio-detail-header__count">
             {photos.length} imagen{photos.length > 1 ? 's' : ''}
           </p>
         )}
-      </div>
+      </header>
 
       {/* Gallery */}
       {photos.length > 0 ? (

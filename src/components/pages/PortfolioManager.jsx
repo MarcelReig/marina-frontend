@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { toast } from 'react-hot-toast';
 import http from "../../api/http";
 import PortfolioSidebarList from "../portfolio/PortfolioSidebarList";
 import PortfolioForm from "../portfolio/PortfolioForm";
@@ -18,9 +19,12 @@ const PortfolioManager = () => {
             return itemId !== id;
           })
         );
+        toast.success('Álbum eliminado');
       })
       .catch((error) => {
+        const msg = error?.response?.data?.error || 'No se pudo eliminar';
         console.log("delete error", error);
+        toast.error(msg);
       });
   };
 
@@ -43,6 +47,11 @@ const PortfolioManager = () => {
       });
   };
 
+  const handleReorder = (reorderedItems) => {
+    // Update local state with reordered items
+    setPortfolioItems(reorderedItems);
+  };
+
   useEffect(() => {
     getPortfolioItems();
   }, []);
@@ -60,6 +69,7 @@ const PortfolioManager = () => {
         <PortfolioSidebarList
           handleDeleteClick={handleDeleteClick}
           data={portfolioItems}
+          onReorder={handleReorder}
         />
       </div>
     </div>

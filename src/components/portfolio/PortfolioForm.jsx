@@ -45,6 +45,7 @@ const PortfolioForm = ({
   handleFormSubmissionError,
   editMode = false,
   initialData = null,
+  onCancel = null,
 }) => {
   const [formState, setFormState] = useState({
     collection_name: "",
@@ -159,17 +160,22 @@ const handleSubmit = async (event) => {
       gallery: galleryBase64Array,
     };
 
-    const response = editMode && initialData
-      ? await http.put(`/portfolio/${initialData._id}`, formData, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-      : await http.post(`/portfolio`, formData, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+    let response;
+    if (editMode && initialData) {
+      // Extract ID properly (handle both string and object formats)
+      const itemId = typeof initialData._id === 'object' ? initialData._id.$oid : initialData._id;
+      response = await http.put(`/portfolio/${itemId}`, formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    } else {
+      response = await http.post(`/portfolio`, formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    }
     
     handleSuccessfulFormSubmission(response.data);
     setFormState({
@@ -181,7 +187,8 @@ const handleSubmit = async (event) => {
     
   } catch (error) {
     console.log("portfolio form handleSubmit error", error);
-    handleFormSubmissionError(error);
+    const errorMessage = error?.response?.data?.error || error?.message || 'Error inesperado al procesar el álbum';
+    handleFormSubmissionError(errorMessage);
   } finally {
     setIsSubmitting(false);
   }
@@ -279,14 +286,21 @@ const handleSubmit = async (event) => {
           </div>
         </div>
 
-        <button className="btn" type="submit" disabled={isSubmitting}>
-          {isSubmitting 
-            ? 'Subiendo imágenes...' 
-            : editMode 
-              ? 'Actualizar álbum' 
-              : 'Añadir colección'
-          }
-        </button>
+        <div className="form-actions">
+          <button className="btn" type="submit" disabled={isSubmitting}>
+            {isSubmitting 
+              ? 'Subiendo imágenes...' 
+              : editMode 
+                ? 'Actualizar álbum' 
+                : 'Añadir colección'
+            }
+          </button>
+          {editMode && onCancel && (
+            <button type="button" className="btn secondary" onClick={onCancel}>
+              Cancelar
+            </button>
+          )}
+        </div>
       </form>
     </div>
   );
@@ -297,6 +311,7 @@ PortfolioForm.propTypes = {
   handleFormSubmissionError: PropTypes.func.isRequired,
   editMode: PropTypes.bool,
   initialData: PropTypes.object,
+  onCancel: PropTypes.func,
 };
 
 export default PortfolioForm;

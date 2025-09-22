@@ -1,16 +1,50 @@
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCartShopping, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCartShopping, faXmark, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { formatPrice } from "../../utils/formatPrice";
 
-const Order = ({ products, order, onRemoveFromOrder }) => {
+import { useMemo, useState } from "react";
+import http from "../../api/http";
+
+const Order = ({ products, order, onRemoveFromOrder, onIncrement, onDecrement }) => {
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
   const orderIds = Object.keys(order || {});
-  const total = orderIds.reduce((sum, key) => {
-    const product = products[key];
-    const count = order[key];
-    if (!product) return sum;
-    return sum + count * product.price;
-  }, 0);
+  const total = useMemo(() => {
+    return orderIds.reduce((sum, key) => {
+      const product = products[key];
+      const count = order[key];
+      if (!product) return sum;
+      return sum + count * product.price;
+    }, 0);
+  }, [orderIds, products, order]);
+
+  const startCheckout = async () => {
+    if (orderIds.length === 0 || isCheckingOut) return;
+    setIsCheckingOut(true);
+    try {
+      const items = orderIds.map((key) => {
+        const product = products[key];
+        const quantity = order[key];
+        return {
+          name: product?.name,
+          price: product?.price,
+          quantity,
+        };
+      });
+      const res = await http.post("/store/checkout/session", { items, currency: "EUR" }, {
+        headers: { "Content-Type": "application/json" },
+      });
+      const url = res?.data?.url;
+      if (url) {
+        window.location.assign(url);
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-alert
+      alert("No se pudo iniciar el pago. Inténtalo de nuevo.");
+    } finally {
+      setIsCheckingOut(false);
+    }
+  };
 
   return (
     <div className="order-wrap">
@@ -18,28 +52,39 @@ const Order = ({ products, order, onRemoveFromOrder }) => {
         <h2>Carrito</h2>
         <FontAwesomeIcon icon={faCartShopping} />
       </div>
-      <ul className="order">
+      <ul className="order" aria-live="polite">
         {orderIds.map((key) => {
           const product = products[key];
           const count = order[key];
           if (!product) return null;
           return (
             <li key={key}>
-              <div>{count}</div>
-              <div>{product.name}</div>
-              <div>{formatPrice(count * product.price)}</div>
-              <button onClick={() => onRemoveFromOrder(key)} aria-label="Quitar del carrito">
+              <div className="qty-controls">
+                <button onClick={() => onDecrement(key)} aria-label={`Disminuir cantidad de ${product.name}`}>
+                  <FontAwesomeIcon icon={faMinus} />
+                </button>
+                <div className="qty" aria-label={`Cantidad de ${product.name}`}>{count}</div>
+                <button onClick={() => onIncrement(key)} aria-label={`Aumentar cantidad de ${product.name}`}>
+                  <FontAwesomeIcon icon={faPlus} />
+                </button>
+              </div>
+              <div className="line-name">{product.name}</div>
+              <div className="line-subtotal">{formatPrice(count * product.price)}</div>
+              <button onClick={() => onRemoveFromOrder(key)} aria-label={`Quitar ${product.name} del carrito`}>
                 <FontAwesomeIcon icon={faXmark} />
               </button>
             </li>
           );
         })}
       </ul>
-      <div className="total">
-        Total: <strong>{formatPrice(total)}</strong>
-      </div>
-      <button onClick={() => alert("Implement Checkout!")} className="btn checkout-btn">
-        Checkout
+      <div className="total">Total: <strong>{formatPrice(total)}</strong></div>
+      <button
+        onClick={startCheckout}
+        className="btn checkout-btn"
+        disabled={orderIds.length === 0 || isCheckingOut}
+        aria-disabled={orderIds.length === 0 || isCheckingOut}
+      >
+        {orderIds.length === 0 ? "Añade productos para continuar" : isCheckingOut ? "Redirigiendo..." : "Checkout"}
       </button>
     </div>
   );
@@ -49,6 +94,8 @@ Order.propTypes = {
   products: PropTypes.object.isRequired,
   order: PropTypes.object.isRequired,
   onRemoveFromOrder: PropTypes.func.isRequired,
+  onIncrement: PropTypes.func.isRequired,
+  onDecrement: PropTypes.func.isRequired,
 };
 
 export default Order;

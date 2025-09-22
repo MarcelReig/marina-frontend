@@ -79,12 +79,423 @@
 
   h3 {
     color: $offwhite;
-    margin: 0 0 5px 0;
+    margin: 0 0 12px 0;
     font-size: 1.2em;
+    font-weight: 600;
   }
 
   small {
     color: #888;
     font-style: italic;
+  }
+}
+
+/* Search Bar - Consistent Design */
+.search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 0 12px;
+  transition: all 0.2s ease;
+
+  &:focus-within {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+  }
+
+  svg {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9rem;
+    margin-right: 8px;
+    flex-shrink: 0;
+
+    .search-bar:focus-within & {
+      color: rgba(255, 255, 255, 0.7);
+    }
+  }
+
+  input {
+    background: transparent;
+    border: none;
+    color: $offwhite;
+    font-size: 0.9rem;
+    padding: 10px 0;
+    flex: 1;
+    outline: none;
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    &:focus::placeholder {
+      color: rgba(255, 255, 255, 0.3);
+    }
+  }
+}
+
+/* Pragmatic Drag and Drop Styles */
+.droppable-list {
+  transition: background-color 0.2s ease;
+  min-height: 200px;
+  position: relative;
+  padding: 8px;
+}
+
+.droppable-list[data-is-drag-over="true"] {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Portfolio Item Thumb - BEM Methodology */
+.portfolio-item-thumb {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  overflow: hidden; // keep rounded corners on drag preview
+  background-clip: padding-box;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+.portfolio-item-thumb__image {
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.1);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+}
+
+.portfolio-item-thumb__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0; // Permite que el texto se trunque si es necesario
+}
+
+.portfolio-item-thumb__title {
+  color: $offwhite;
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+  transition: color 0.2s ease;
+
+  .portfolio-item-thumb:hover & {
+    color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+.portfolio-item-thumb__actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.portfolio-item-thumb.is-dragging {
+  /* Hide original element during drag so only the drag image is visible */
+  opacity: 0;
+  visibility: hidden;
+}
+
+.portfolio-item-thumb.is-drop-target {
+  background: rgba(52, 152, 219, 0.1);
+  border: 1px solid rgba(52, 152, 219, 0.3);
+}
+
+/* Drop indicators */
+.drop-indicator {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #3498db;
+  border-radius: 1px;
+  z-index: 1001;
+
+  &--top {
+    top: -1px;
+  }
+
+  &--bottom {
+    bottom: -1px;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 6px;
+    height: 6px;
+    background: #3498db;
+    border-radius: 50%;
+    top: -2px;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    width: 6px;
+    height: 6px;
+    background: #3498db;
+    border-radius: 50%;
+    top: -2px;
+  }
+}
+
+/* Action Buttons - BEM */
+.portfolio-item-thumb__drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: grab;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  flex-shrink: 0;
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  &:active {
+    cursor: grabbing;
+    color: $offwhite;
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+}
+
+.portfolio-item-thumb__action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  &--edit {
+    color: rgba(255, 255, 255, 0.6);
+
+    &:hover {
+      color: #3498db;
+      background-color: rgba(52, 152, 219, 0.15);
+    }
+  }
+
+  &--delete {
+    color: rgba(255, 255, 255, 0.6);
+
+    &:hover {
+      color: $warning;
+      background-color: rgba(231, 76, 60, 0.15);
+    }
+  }
+}
+
+.reordering-indicator {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: rgba(52, 152, 219, 0.1);
+  color: #3498db;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  text-align: center;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Drop target indicator - unified to solid style like inventory (blue for portfolio) */
+
+/* Inventory Item Styles - BEM */
+.inventory-item-thumb {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  overflow: hidden; // keep rounded corners on drag preview
+  background-clip: padding-box;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  &.is-dragging {
+    /* Hide original element during drag so only the drag image is visible */
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  &.is-drop-target {
+    background: rgba(46, 204, 113, 0.1);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+  }
+}
+
+.inventory-item-thumb__image {
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.1);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+}
+
+.inventory-item-thumb__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+.inventory-item-thumb__title {
+  color: $offwhite;
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+  transition: color 0.2s ease;
+  margin-bottom: 2px;
+
+  .inventory-item-thumb:hover & {
+    color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+.inventory-item-thumb__price {
+  color: #2ecc71;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: color 0.2s ease;
+
+  .inventory-item-thumb:hover & {
+    color: #27ae60;
+  }
+}
+
+.inventory-item-thumb__actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.inventory-item-thumb__drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: grab;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  flex-shrink: 0;
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  &:active {
+    cursor: grabbing;
+    color: $offwhite;
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+}
+
+.inventory-item-thumb__action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  &--edit {
+    color: rgba(255, 255, 255, 0.6);
+
+    &:hover {
+      color: #3498db;
+      background-color: rgba(52, 152, 219, 0.15);
+    }
+  }
+
+  &--delete {
+    color: rgba(255, 255, 255, 0.6);
+
+    &:hover {
+      color: $warning;
+      background-color: rgba(231, 76, 60, 0.15);
+    }
   }
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from 'react-hot-toast';
 import http from "../../api/http";
 import InventoryForm from "../shop/InventoryForm";
 import InventorySidebarList from "../shop/InventorySidebarList";
@@ -38,8 +39,18 @@ function InventoryManager() {
           const itId = it._id && it._id.$oid ? it._id.$oid : it._id;
           return itId !== id;
         }));
+        toast.success('Producto eliminado');
       })
-      .catch((err) => setError(err?.response?.data?.error || "No se pudo eliminar"));
+      .catch((err) => {
+        const msg = err?.response?.data?.error || "No se pudo eliminar";
+        setError(msg);
+        toast.error(msg);
+      });
+  };
+
+  const handleReorder = (reorderedItems) => {
+    // Update local state with reordered items
+    setItems(reorderedItems);
   };
 
   return (
@@ -49,7 +60,7 @@ function InventoryManager() {
         {error && <div className="error">{error}</div>}
       </div>
       <div className="right-column">
-        <InventorySidebarList data={items} onDeleteClick={handleDelete} />
+        <InventorySidebarList data={items} onDeleteClick={handleDelete} onReorder={handleReorder} />
       </div>
     </div>
   );

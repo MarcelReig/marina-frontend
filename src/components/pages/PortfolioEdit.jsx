@@ -40,8 +40,13 @@ const PortfolioEdit = () => {
     navigate("/portfolio-manager");
   };
 
-  const handleUpdateError = (error) => {
-    setError(error?.response?.data?.error || "Error al actualizar el álbum");
+  const handleUpdateError = (errorMessage) => {
+    // errorMessage already processed in PortfolioForm
+    setError(typeof errorMessage === 'string' ? errorMessage : "Error al actualizar el álbum");
+  };
+
+  const handleCancel = () => {
+    navigate("/portfolio-manager");
   };
 
   const handleDeleteClick = (portfolioItem) => {
@@ -116,6 +121,7 @@ const PortfolioEdit = () => {
           handleFormSubmissionError={handleUpdateError}
           editMode={true}
           initialData={portfolioItem}
+          onCancel={handleCancel}
         />
         {error && <div className="error">{error}</div>}
       </div>
@@ -126,7 +132,8 @@ const PortfolioEdit = () => {
         </div>
         <PortfolioSidebarList 
           data={portfolioItems} 
-          handleDeleteClick={handleDeleteClick} 
+          handleDeleteClick={handleDeleteClick}
+          onReorder={(reorderedItems) => setPortfolioItems(reorderedItems)}
         />
       </div>
     </div>
