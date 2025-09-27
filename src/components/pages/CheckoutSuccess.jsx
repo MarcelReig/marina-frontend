@@ -69,7 +69,7 @@ const CheckoutSuccess = () => {
     const orderNumber = order.order_number || "";
     const email = order.customer_email || "";
     const currency = (order.currency || "eur").toUpperCase();
-    const total = typeof order.amount_total_minor === "number" ? order.amount_total_minor / 100 : 0;
+    const totalMinor = typeof order.amount_total_minor === "number" ? order.amount_total_minor : 0;
     const items = order.items || [];
 
     // Address may exist as shipping_details (Stripe) in future; we keep summary minimal for now
@@ -93,7 +93,7 @@ const CheckoutSuccess = () => {
             </tr>
             <tr>
               <td>Total</td>
-              <td>{formatPrice(total)}</td>
+              <td>{formatPrice(totalMinor)}</td>
             </tr>
           </tbody>
         </table>
@@ -111,7 +111,7 @@ const CheckoutSuccess = () => {
               <tr key={idx}>
                 <td>{it.quantity}</td>
                 <td>{it.description}</td>
-                <td className="subtotal">{formatPrice((it.amount_total_minor || 0) / 100)}</td>
+                <td className="subtotal">{formatPrice(it.amount_total_minor || 0)}</td>
               </tr>
             ))}
           </tbody>

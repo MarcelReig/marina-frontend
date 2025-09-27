@@ -1,12 +1,11 @@
 /**
  * Format price in euros
- * @param {number} euros - Price in euros
+ * @param {number} minorUnits - Price in minor units (cents)
  * @returns {string} Formatted price string
  */
-export function formatPrice(euros) {
-  return (euros / 100).toLocaleString("es-ES", {
+export function formatPrice(minorUnits) {
+  return (minorUnits / 100).toLocaleString("es-ES", {
     style: "currency",
-    currency: "EUR"
+    currency: "EUR",
   });
 }
-
