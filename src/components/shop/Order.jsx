@@ -18,19 +18,20 @@ const Order = ({ products, order, onRemoveFromOrder, onIncrement, onDecrement })
     }, 0);
   }, [orderIds, products, order]);
 
+  const buildSecureItems = () => {
+    return orderIds.map((key) => {
+      const p = products[key];
+      const q = order[key];
+      const id = p?._id?.$oid || p?._id;
+      return { productId: id, quantity: q };
+    }).filter((it) => it.productId && it.quantity > 0);
+  };
+
   const startCheckout = async () => {
     if (orderIds.length === 0 || isCheckingOut) return;
     setIsCheckingOut(true);
     try {
-      const items = orderIds.map((key) => {
-        const product = products[key];
-        const quantity = order[key];
-        return {
-          name: product?.name,
-          price: product?.price,
-          quantity,
-        };
-      });
+      const items = buildSecureItems();
       const res = await http.post("/store/checkout/session", { items, currency: "EUR" }, {
         headers: { "Content-Type": "application/json" },
       });

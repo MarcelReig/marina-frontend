@@ -1,15 +1,17 @@
 import PropTypes from "prop-types";
 import { memo } from "react";
 import { formatPrice } from "../../utils/formatPrice";
+import { galleryUrl } from "../../utils/cloudinary";
 
 const Product = ({ details, onAddToOrder, index }) => {
   const { image, name, price, description } = details;
+  const imgSrc = galleryUrl(image);
 
   return (
     <li className="menu-product">
       <div className="product-wrapper">
         <img
-          src={image}
+          src={imgSrc}
           alt={name}
           loading="lazy"
           decoding="async"

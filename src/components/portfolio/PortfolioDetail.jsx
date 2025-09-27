@@ -13,6 +13,7 @@ import Slideshow from "yet-another-react-lightbox/plugins/slideshow";
 import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
+import { galleryUrl } from "../../utils/cloudinary";
 
 const PortfolioDetail = () => {
   const { id } = useParams();
@@ -35,7 +36,7 @@ const PortfolioDetail = () => {
 
     setImageLoadingCount(gallery.length);
     
-    const imagePromises = gallery.map((dataURL, index) => 
+    const imagePromises = gallery.map((rawUrl, index) => 
       new Promise((resolve, reject) => {
         const img = new window.Image();
         
@@ -48,7 +49,7 @@ const PortfolioDetail = () => {
           cleanup();
           setImageLoadingCount(prev => prev - 1);
           resolve({
-            src: dataURL,
+            src: galleryUrl(rawUrl),
             width: img.naturalWidth,
             height: img.naturalHeight,
             alt: `${portfolioItem?.name || 'Portfolio'} - Imagen ${index + 1}`,
@@ -58,11 +59,11 @@ const PortfolioDetail = () => {
         img.onerror = () => {
           cleanup();
           setImageLoadingCount(prev => prev - 1);
-          console.error(`Failed to load image: ${dataURL}`);
+          console.error(`Failed to load image: ${rawUrl}`);
           reject(new Error(`Failed to load image ${index + 1}`));
         };
         
-        img.src = dataURL;
+        img.src = galleryUrl(rawUrl);
       })
     );
 

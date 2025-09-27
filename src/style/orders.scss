@@ -1,0 +1,106 @@
+@use "variables" as *;
+
+.orders-page {
+  padding: 24px;
+
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .btn {
+      margin-left: 12px;
+    }
+  }
+
+  .orders-toolbar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+
+    input[type="text"],
+    input[type="date"] {
+      padding: 8px 10px;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      border-radius: 6px;
+      background: #fff;
+      color: #000;
+    }
+  }
+
+  .orders-table {
+    overflow-x: auto;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      background: #fff;
+
+      thead th {
+        text-align: left;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 8px;
+        font-weight: 600;
+      }
+
+      tbody td {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        padding: 8px;
+        vertical-align: top;
+      }
+
+      .items-table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+
+        th {
+          text-align: left;
+          font-weight: 600;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+          padding: 4px 6px;
+        }
+
+        td {
+          padding: 4px 6px;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        td.subtotal {
+          text-align: right;
+          white-space: nowrap;
+        }
+      }
+
+      .status-badge {
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+
+        &.ok {
+          background: rgba(46, 204, 113, 0.15);
+          color: #27ae60;
+        }
+
+        &.pending {
+          background: rgba(241, 196, 15, 0.15);
+          color: #f1c40f;
+        }
+      }
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .session-cell {
+      max-width: 240px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}

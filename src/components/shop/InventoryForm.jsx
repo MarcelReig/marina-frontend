@@ -3,6 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import PropTypes from 'prop-types';
 import http from '../../api/http';
 import { toast } from 'react-hot-toast';
+import { uploadToCloudinary } from '../../utils/cloudinary';
 
 const InventoryForm = ({ onSuccessfulSubmission, onFormSubmissionError, editMode = false, initialData = null, onCancel = null }) => {
   const [formData, setFormData] = useState({
@@ -29,26 +30,29 @@ const InventoryForm = ({ onSuccessfulSubmission, onFormSubmissionError, editMode
   const onDrop = (acceptedFiles) => {
     if (acceptedFiles.length > 0) {
       const file = acceptedFiles[0];
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setFormData(prev => ({
-          ...prev,
-          image: {
-            file,
-            dataURL: e.target.result
-          }
-        }));
-      };
-      reader.readAsDataURL(file);
+      setFormData(prev => ({
+        ...prev,
+        image: { file }
+      }));
     }
   };
 
+  const MAX_PRODUCT_SIZE = 5 * 1024 * 1024;
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } = useDropzone({
     onDrop,
     accept: {
-      'image/*': ['.jpeg', '.jpg', '.png']
+      'image/*': ['.jpeg', '.jpg', '.png', '.webp', '.heic']
     },
-    maxFiles: 1
+    maxFiles: 1,
+    maxSize: MAX_PRODUCT_SIZE,
+    onDropRejected: (fileRejections) => {
+      const tooLarge = fileRejections.some((rej) => (rej.errors || []).some((e) => e.code === 'file-too-large'));
+      if (tooLarge) {
+        toast.error(`La imagen supera el límite de ${(MAX_PRODUCT_SIZE / (1024 * 1024)).toFixed(0)} MB.`);
+      } else {
+        toast.error('Archivo no válido. Formatos permitidos: JPG, PNG, WEBP, HEIC.');
+      }
+    },
   });
 
   const baseStyle = useMemo(() => ({
@@ -106,11 +110,15 @@ const InventoryForm = ({ onSuccessfulSubmission, onFormSubmissionError, editMode
         price: Math.round(parseFloat(formData.price) * 100) // Convert euros to cents
       };
 
-      // Only send image if it's new (base64) or if we're creating a new product
-      if (!editMode || (formData.image && formData.image.dataURL && formData.image.dataURL.startsWith('data:image'))) {
-        payload.image = formData.image.dataURL;
+      // Upload to Cloudinary if new file present
+      if (formData.image && formData.image.file) {
+        const url = await uploadToCloudinary(formData.image.file, {
+          preset: import.meta.env.VITE_CLOUDINARY_UNSIGNED_PRESET,
+          folder: 'store/products'
+        });
+        payload.image = url;
       } else if (editMode && formData.image && formData.image.dataURL) {
-        payload.image = formData.image.dataURL; // Keep existing URL
+        payload.image = formData.image.dataURL; // keep existing URL for edit
       }
 
       const response = await toast.promise(
@@ -198,11 +206,15 @@ const InventoryForm = ({ onSuccessfulSubmission, onFormSubmissionError, editMode
               </div>
             ) : formData.image ? (
               <div className="uploaded-image">
-                <img
-                  src={formData.image.dataURL}
-                  alt="Preview"
-                  style={{ maxWidth: '200px', maxHeight: '200px' }}
-                />
+                {formData.image.dataURL ? (
+                  <img
+                    src={formData.image.dataURL}
+                    alt="Preview"
+                    style={{ maxWidth: '200px', maxHeight: '200px' }}
+                  />
+                ) : (
+                  <p>Imagen lista para subir: {formData.image.file?.name}</p>
+                )}
                 <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
                   <p style={{ margin: 0, flex: 1 }}>Arrastra otra imagen para reemplazar</p>
                   <button type="button" className="btn secondary" onClick={() => setFormData(prev => ({ ...prev, image: null }))}>
@@ -216,6 +228,9 @@ const InventoryForm = ({ onSuccessfulSubmission, onFormSubmissionError, editMode
           </div>
         </div>
         {errors.image && <small className="field-error" aria-live="polite">{errors.image}</small>}
+        <small style={{ display: 'block', marginTop: 8, opacity: 0.8 }}>
+          Formatos: JPG, PNG, WEBP, HEIC — Máx. 5 MB
+        </small>
       </div>
 
       <div className="form-actions">

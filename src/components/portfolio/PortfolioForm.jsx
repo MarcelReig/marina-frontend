@@ -2,6 +2,8 @@ import { useState, useCallback, useEffect } from "react";
 import http from "../../api/http";
 import { useDropzone } from "react-dropzone";
 import PropTypes from "prop-types";
+import { toast } from "react-hot-toast";
+import { uploadToCloudinary } from "../../utils/cloudinary";
 
 // Dropzone styles
 const baseStyle = {
@@ -69,15 +71,7 @@ const PortfolioForm = ({
   }, [editMode, initialData]);
   
 
-  // Convertir archivo a base64
-  const fileToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
-  };
+  // Ya no convertimos a Base64: subimos a Cloudinary directamente
 
   // Imagen de portada
   const onThumbDrop = useCallback((acceptedFiles) => {
@@ -97,15 +91,27 @@ const PortfolioForm = ({
   
 
   // Configuración de Dropzone de imagen de portada
+  const MAX_PORTFOLIO_SIZE = 10 * 1024 * 1024;
   const { getRootProps: getThumbRootProps, getInputProps: getThumbInputProps, isFocused: isThumbFocused, isDragAccept: isThumbDragAccept, isDragReject: isThumbDragReject } =
     useDropzone({
       onDrop: onThumbDrop,
       accept: {
         'image/png': ['.png'],
         'image/jpg': ['.jpg'],
-        'image/jpeg': ['.jpeg']
+        'image/jpeg': ['.jpeg'],
+        'image/webp': ['.webp'],
+        'image/heic': ['.heic']
       },
       multiple: false,
+      maxSize: MAX_PORTFOLIO_SIZE,
+      onDropRejected: (fileRejections) => {
+        const tooLarge = fileRejections.some((rej) => (rej.errors || []).some((e) => e.code === 'file-too-large'));
+        if (tooLarge) {
+          toast.error(`La imagen de portada supera ${Math.round(MAX_PORTFOLIO_SIZE / (1024 * 1024))} MB.`);
+        } else {
+          toast.error('Archivo no válido para portada. Formatos: JPG, PNG, WEBP, HEIC.');
+        }
+      },
     });
 
  // Configuración de Dropzone de galería
@@ -120,10 +126,20 @@ const PortfolioForm = ({
     accept: {
       'image/png': ['.png'],
       'image/jpg': ['.jpg'],
-      'image/jpeg': ['.jpeg']
+      'image/jpeg': ['.jpeg'],
+      'image/webp': ['.webp'],
+      'image/heic': ['.heic']
     },
-    maxSize: 2 * 1024 * 1024,
+    maxSize: MAX_PORTFOLIO_SIZE,
     multiple: true,
+    onDropRejected: (fileRejections) => {
+      const tooLarge = fileRejections.some((rej) => (rej.errors || []).some((e) => e.code === 'file-too-large'));
+      if (tooLarge) {
+        toast.error(`Alguna imagen de la galería supera ${Math.round(MAX_PORTFOLIO_SIZE / (1024 * 1024))} MB.`);
+      } else {
+        toast.error('Algún archivo no es válido para la galería. Formatos: JPG, PNG, WEBP, HEIC.');
+      }
+    },
   });
 
 // Manejadores de eventos
@@ -139,25 +155,27 @@ const handleSubmit = async (event) => {
   setIsSubmitting(true);
 
   try {
-    // En modo edición, solo convertir a base64 si son archivos nuevos
-    const thumbBase64 = (formState.thumb_img_url && typeof formState.thumb_img_url === 'object' && formState.thumb_img_url.constructor === File)
-      ? await fileToBase64(formState.thumb_img_url)
-      : formState.thumb_img_url; // Mantener URL existente
-      
-    const galleryBase64Array = await Promise.all(
-      formState.gallery.map(async (item) => {
-        if (typeof item === 'string') {
-          return item; // Es una URL existente
-        }
-        return await fileToBase64(item); // Es un archivo nuevo
-      })
-    );
+    // Subir a Cloudinary cualquier archivo nuevo y quedarse solo con URLs
+    let thumbUrl = formState.thumb_img_url;
+    if (thumbUrl && typeof thumbUrl === 'object' && thumbUrl.constructor === File) {
+      thumbUrl = await uploadToCloudinary(thumbUrl, { preset: import.meta.env.VITE_CLOUDINARY_UNSIGNED_PRESET, folder: 'portfolio/thumbnails' });
+    }
+
+    const galleryUrls = [];
+    for (const item of formState.gallery) {
+      if (typeof item === 'string') {
+        galleryUrls.push(item);
+      } else {
+        const url = await uploadToCloudinary(item, { preset: import.meta.env.VITE_CLOUDINARY_UNSIGNED_PRESET, folder: 'portfolio/gallery' });
+        galleryUrls.push(url);
+      }
+    }
 
     const formData = {
       name: formState.collection_name,
       description: formState.description,
-      thumb_img_url: thumbBase64,
-      gallery: galleryBase64Array,
+      thumb_img_url: thumbUrl,
+      gallery: galleryUrls,
     };
 
     let response;
@@ -284,6 +302,9 @@ const handleSubmit = async (event) => {
               <p>Arrastra aquí las imágenes de la galería</p>
             )}
           </div>
+        <small style={{ display: 'block', marginTop: 8, opacity: 0.8 }}>
+          Formatos: JPG, PNG, WEBP, HEIC — Máx. 10 MB
+        </small>
         </div>
 
         <div className="form-actions">

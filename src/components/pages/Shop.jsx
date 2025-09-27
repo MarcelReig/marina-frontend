@@ -93,6 +93,17 @@ function Shop() {
     });
   };
 
+  const buildSecureItems = () => {
+    // Convert cart to [{ productId, quantity }]
+    const ids = Object.keys(order || {});
+    return ids.map((key) => {
+      const p = productsMap[key];
+      const q = order[key];
+      const id = p?._id?.$oid || p?._id; // Mongo id from API
+      return { productId: id, quantity: q };
+    }).filter((it) => it.productId && it.quantity > 0);
+  };
+
   if (isLoading) {
     return (
       <div className="marina-store">

@@ -101,6 +101,16 @@ const Navbar = () => {
                   Inventory Manager
                 </NavLink>
               </li>
+              <li className="nav-link-wrapper">
+                <NavLink
+                  to="/orders"
+                  className={({ isActive }) =>
+                    isActive ? "nav-link-active" : ""
+                  }
+                >
+                  Pedidos
+                </NavLink>
+              </li>
               <li>
                 <a onClick={handleLogoutClick}>
                 <FontAwesomeIcon icon={faArrowRightFromBracket} />

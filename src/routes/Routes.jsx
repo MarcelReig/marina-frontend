@@ -13,6 +13,9 @@ import PortfolioManager from "../components/pages/PortfolioManager";
 import PortfolioEdit from "../components/pages/PortfolioEdit";
 import InventoryManager from "../components/pages/InventoryManager";
 import InventoryEdit from "../components/pages/InventoryEdit";
+import Orders from "../components/pages/Orders";
+import CheckoutSuccess from "../components/pages/CheckoutSuccess";
+import CheckoutCancel from "../components/pages/CheckoutCancel";
 
 const Routes = () => {
   const router = createBrowserRouter([
@@ -42,6 +45,14 @@ const Routes = () => {
           element: <Shop />,
         },
         {
+          path: "/checkout/success",
+          element: <CheckoutSuccess />,
+        },
+        {
+          path: "/checkout/cancel",
+          element: <CheckoutCancel />,
+        },
+        {
           path: "/contact",
           element: <Contact />,
         },
@@ -67,6 +78,10 @@ const Routes = () => {
             {
               path: "/inventory-manager/edit/:id",
               element: <InventoryEdit />,
+            },
+            {
+              path: "/orders",
+              element: <Orders />,
             },
           ],
         },
