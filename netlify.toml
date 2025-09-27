@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+# Mark public frontend env vars as non-secrets so Netlify's scanner ignores them
+  SECRETS_SCAN_OMIT_KEYS = "VITE_FLASK_API_URL,VITE_CLOUDINARY_CLOUD_NAME,VITE_CLOUDINARY_MARINA_PRESET,VITE_CLOUDINARY_UNSIGNED_PRESET"
+
+
