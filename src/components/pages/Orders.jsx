@@ -119,7 +119,7 @@ const Orders = () => {
                 const id = o._id?.$oid || o._id;
                 const created = o.created_at?.$date || o.created_at;
                 const date = created ? new Date(created).toLocaleString() : "";
-                const total = typeof o.amount_total_minor === 'number' ? (o.amount_total_minor / 100) : 0;
+                const totalMinor = typeof o.amount_total_minor === 'number' ? o.amount_total_minor : 0;
                 const status = (o.payment_status || '').toUpperCase();
                 return (
                   <tr key={id}>
@@ -129,7 +129,7 @@ const Orders = () => {
                       <span className={`status-badge ${status === 'PAID' || status === 'SUCCEEDED' ? 'ok' : 'pending'}`}>{status || '—'}</span>
                     </td>
                     <td>{(o.currency || 'eur').toUpperCase()}</td>
-                    <td className="text-right">{formatPrice(total)}</td>
+                    <td className="text-right">{formatPrice(totalMinor)}</td>
                     <td>
                       <table className="items-table">
                         <thead>
@@ -144,9 +144,7 @@ const Orders = () => {
                             <tr key={idx}>
                               <td>{it.quantity}</td>
                               <td>{it.description}</td>
-                              <td className="subtotal">
-                                {formatPrice((it.amount_total_minor || 0) / 100)}
-                              </td>
+                              <td className="subtotal">{formatPrice(it.amount_total_minor || 0)}</td>
                             </tr>
                           ))}
                         </tbody>
