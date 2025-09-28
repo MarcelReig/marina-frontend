@@ -14,6 +14,7 @@ const InventoryForm = ({ onSuccessfulSubmission, onFormSubmissionError, editMode
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
+  const [previewUrl, setPreviewUrl] = useState("");
 
   // Load initial data in edit mode
   useEffect(() => {
@@ -54,6 +55,21 @@ const InventoryForm = ({ onSuccessfulSubmission, onFormSubmissionError, editMode
       }
     },
   });
+
+  // Local preview for selected image
+  useEffect(() => {
+    if (formData.image?.dataURL) {
+      setPreviewUrl(formData.image.dataURL);
+      return () => {};
+    }
+    if (formData.image?.file) {
+      const url = URL.createObjectURL(formData.image.file);
+      setPreviewUrl(url);
+      return () => URL.revokeObjectURL(url);
+    }
+    setPreviewUrl("");
+    return () => {};
+  }, [formData.image]);
 
   const baseStyle = useMemo(() => ({
     flex: 1,
@@ -205,23 +221,11 @@ const InventoryForm = ({ onSuccessfulSubmission, onFormSubmissionError, editMode
                 <p>Subiendo imagen...</p>
               </div>
             ) : formData.image ? (
-              <div className="uploaded-image">
-                {formData.image.dataURL ? (
-                  <img
-                    src={formData.image.dataURL}
-                    alt="Preview"
-                    style={{ maxWidth: '200px', maxHeight: '200px' }}
-                  />
-                ) : (
-                  <p>Imagen lista para subir: {formData.image.file?.name}</p>
-                )}
-                <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                  <p style={{ margin: 0, flex: 1 }}>Arrastra otra imagen para reemplazar</p>
-                  <button type="button" className="btn secondary" onClick={() => setFormData(prev => ({ ...prev, image: null }))}>
-                    Quitar
-                  </button>
-                </div>
-              </div>
+              <img
+                src={previewUrl || formData.image.dataURL}
+                alt="Preview"
+                style={{ maxWidth: '200px', maxHeight: '200px' }}
+              />
             ) : (
               <p>Arrastra aquí la imagen del producto o haz clic para seleccionar</p>
             )}
