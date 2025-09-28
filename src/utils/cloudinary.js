@@ -8,11 +8,11 @@ export function transformImageUrl(url, params = {}) {
     const idx = url.indexOf(uploadMarker);
     if (idx === -1) return url;
 
-    const defaults = { f: "auto", q: "auto", dpr: "auto" };
+    const defaults = { f: "auto", q: "auto", dpr: "auto", a: "auto" };
     const final = { ...defaults, ...params };
 
     // Build transformation string in stable order
-    const order = ["f", "q", "dpr", "c", "g", "w", "h", "e"];
+    const order = ["f", "q", "dpr", "a", "c", "g", "w", "h", "e"];
     const parts = [];
     for (const key of order) {
       if (
