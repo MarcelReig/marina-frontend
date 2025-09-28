@@ -330,7 +330,6 @@ const PortfolioSidebarList = ({ data = [], handleDeleteClick, onReorder }) => {
         onConfirm={() => {
           if (confirmState.item) {
             handleDeleteClick(confirmState.item);
-            toast.success('Álbum eliminado');
           }
           setConfirmState({ open: false, item: null });
         }}
