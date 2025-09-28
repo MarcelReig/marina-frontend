@@ -57,6 +57,7 @@ const PortfolioForm = ({
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
   
   // Cargar datos iniciales en modo edición
   useEffect(() => {
@@ -146,12 +147,26 @@ const PortfolioForm = ({
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormState((prevState) => ({ ...prevState, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
 // Manejo de envio de formulario
 const handleSubmit = async (event) => {
   event.preventDefault();
-  
+
+  // Simple client-side validation
+  const newErrors = {};
+  if (!formState.collection_name || !formState.collection_name.trim()) newErrors.collection_name = 'El nombre es obligatorio';
+  if (!formState.description || !formState.description.trim()) newErrors.description = 'La descripción es obligatoria';
+  if (!formState.thumb_img_url) newErrors.thumb_img_url = 'La portada es obligatoria';
+  if (!formState.gallery || formState.gallery.length === 0) newErrors.gallery = 'Añade al menos una imagen a la galería';
+  if (Object.keys(newErrors).length) {
+    setErrors(newErrors);
+    const firstMsg = Object.values(newErrors)[0];
+    toast.error(firstMsg);
+    return;
+  }
+
   setIsSubmitting(true);
 
   try {
@@ -240,7 +255,9 @@ const handleSubmit = async (event) => {
             placeholder="Nombre de la colección"
             value={formState.collection_name}
             onChange={handleChange}
+            required
           />
+          {errors.collection_name && <small className="field-error" aria-live="polite">{errors.collection_name}</small>}
         </div>
 
         <div className="one-column">
@@ -250,7 +267,9 @@ const handleSubmit = async (event) => {
             placeholder="Descripción"
             value={formState.description}
             onChange={handleChange}
+            required
           />
+          {errors.description && <small className="field-error" aria-live="polite">{errors.description}</small>}
         </div>
 
         <div className="image-uploaders">
@@ -276,6 +295,7 @@ const handleSubmit = async (event) => {
               <p>Arrastra aquí la imagen de portada</p>
             )}
           </div>
+          {errors.thumb_img_url && <small className="field-error" aria-live="polite">{errors.thumb_img_url}</small>}
 
           <div
             {...getGalleryRootProps({ style: getGalleryStyle() })}
@@ -302,6 +322,7 @@ const handleSubmit = async (event) => {
               <p>Arrastra aquí las imágenes de la galería</p>
             )}
           </div>
+        {errors.gallery && <small className="field-error" aria-live="polite">{errors.gallery}</small>}
         <small style={{ display: 'block', marginTop: 8, opacity: 0.8 }}>
           Formatos: JPG, PNG, WEBP, HEIC — Máx. 10 MB
         </small>
