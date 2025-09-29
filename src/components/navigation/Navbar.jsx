@@ -140,7 +140,7 @@ const Navbar = () => {
                   Pedidos
                 </NavLink>
               </li>
-              <li>
+              <li className="logout-item">
                 <a 
                   onClick={() => {
                     handleLogoutClick();
