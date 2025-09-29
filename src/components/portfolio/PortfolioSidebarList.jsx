@@ -7,7 +7,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { draggable, dropTargetForElements, monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import { reorder } from '@atlaskit/pragmatic-drag-and-drop/reorder';
 import http from "../../api/http";
-import { thumbUrl } from "../../utils/cloudinary";
+import { coverUrl } from "../../utils/cloudinary";
 import ConfirmDialog from '../shared/ConfirmDialog';
 
 const PortfolioSidebarList = ({ data = [], handleDeleteClick, onReorder }) => {
@@ -245,7 +245,7 @@ const PortfolioSidebarList = ({ data = [], handleDeleteClick, onReorder }) => {
         </div>
         
         <div className="portfolio-item-thumb__image">
-          <img src={thumbUrl(portfolioItem.thumb_img_url)} alt={portfolioItem.name} draggable={false} />
+          <img src={coverUrl(portfolioItem.thumb_img_url)} alt={portfolioItem.name} draggable={false} />
         </div>
 
         <div className="portfolio-item-thumb__content">

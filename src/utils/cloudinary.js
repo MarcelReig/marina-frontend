@@ -8,11 +8,11 @@ export function transformImageUrl(url, params = {}) {
     const idx = url.indexOf(uploadMarker);
     if (idx === -1) return url;
 
-    const defaults = { f: "auto", q: "auto", dpr: "auto", a: "auto" };
+    const defaults = { f: "auto", q: "auto", dpr: "auto" };
     const final = { ...defaults, ...params };
 
-    // Build transformation string in stable order
-    const order = ["f", "q", "dpr", "a", "c", "g", "w", "h", "e"];
+    // Build transformation string with a_auto first for orientation
+    const order = ["a", "f", "q", "dpr", "c", "g", "w", "h", "e"];
     const parts = [];
     for (const key of order) {
       if (
@@ -41,6 +41,19 @@ export function thumbUrl(url) {
     q: "auto:eco",
   });
 }
+
+// Función específica para portadas sin rotación automática
+export function coverUrl(url) {
+  return transformImageUrl(url, {
+    c: "fill",
+    g: "auto",
+    w: 600,
+    h: 600,
+    q: "auto:eco",
+  });
+}
+
+// Note: a_auto removed from defaults as it was causing incorrect rotations
 
 export function galleryUrl(url) {
   return transformImageUrl(url, { c: "limit", w: 1600, q: "auto:good" });

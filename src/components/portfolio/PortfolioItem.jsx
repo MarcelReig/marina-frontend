@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import { thumbUrl } from "../../utils/cloudinary";
+import { coverUrl } from "../../utils/cloudinary";
 
 const PortfolioItem = ({ item }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -15,9 +15,8 @@ const PortfolioItem = ({ item }) => {
     setIsHovered(false);
   };
 
-  const { _id, thumb_img_url, name, gallery } = item;
-  const sourceUrl = thumb_img_url || (Array.isArray(gallery) && gallery.length > 0 ? gallery[0] : thumb_img_url);
-  const bgUrl = thumbUrl(sourceUrl);
+  const { _id, thumb_img_url, name } = item;
+  const bgUrl = coverUrl(thumb_img_url);
 
   return (
     <Link to={`/portfolio/${_id?.$oid || _id}`} className="portfolio-card-link">

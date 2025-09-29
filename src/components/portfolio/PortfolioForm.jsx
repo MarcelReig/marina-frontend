@@ -173,6 +173,7 @@ const handleSubmit = async (event) => {
     // Subir a Cloudinary cualquier archivo nuevo y quedarse solo con URLs
     let thumbUrl = formState.thumb_img_url;
     if (thumbUrl && typeof thumbUrl === 'object' && thumbUrl.constructor === File) {
+      // Mantener portada en thumbnails pero usando el MISMO preset unsigned (mismas incoming transformations)
       thumbUrl = await uploadToCloudinary(thumbUrl, { preset: import.meta.env.VITE_CLOUDINARY_UNSIGNED_PRESET, folder: 'portfolio/thumbnails' });
     }
 
