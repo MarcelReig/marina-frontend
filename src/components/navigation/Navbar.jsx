@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRightFromBracket} from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../context/useAuth";
 
@@ -16,9 +16,31 @@ const Navbar = () => {
   };
 
   const [isNavExpanded, setIsNavExpanded] = useState(false);
+  const navRef = useRef(null);
+
+  const handleNavLinkClick = () => {
+    setIsNavExpanded(false); // Close menu when a link is clicked
+  };
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (navRef.current && !navRef.current.contains(event.target)) {
+        setIsNavExpanded(false);
+      }
+    };
+
+    if (isNavExpanded) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isNavExpanded]);
 
   return (
-    <div className="navigation">
+    <div className="navigation" ref={navRef}>
       <NavLink to="/" className="brand-name">
         Marina
       </NavLink>
@@ -51,6 +73,7 @@ const Navbar = () => {
             <NavLink
               to="/"
               className={({ isActive }) => (isActive ? "nav-link-active" : "")}
+              onClick={handleNavLinkClick}
             >
               Home
             </NavLink>
@@ -59,6 +82,7 @@ const Navbar = () => {
             <NavLink
               to="about"
               className={({ isActive }) => (isActive ? "nav-link-active" : "")}
+              onClick={handleNavLinkClick}
             >
               About
             </NavLink>
@@ -67,6 +91,7 @@ const Navbar = () => {
             <NavLink
               to="shop"
               className={({ isActive }) => (isActive ? "nav-link-active" : "")}
+              onClick={handleNavLinkClick}
             >
               Shop
             </NavLink>
@@ -75,6 +100,7 @@ const Navbar = () => {
             <NavLink
               to="contact"
               className={({ isActive }) => (isActive ? "nav-link-active" : "")}
+              onClick={handleNavLinkClick}
             >
               Contact
             </NavLink>
@@ -87,6 +113,7 @@ const Navbar = () => {
                   className={({ isActive }) =>
                     isActive ? "nav-link-active" : ""
                   }
+                  onClick={handleNavLinkClick}
                 >
                   Portfolio Manager
                 </NavLink>
@@ -97,6 +124,7 @@ const Navbar = () => {
                   className={({ isActive }) =>
                     isActive ? "nav-link-active" : ""
                   }
+                  onClick={handleNavLinkClick}
                 >
                   Inventory Manager
                 </NavLink>
@@ -107,12 +135,19 @@ const Navbar = () => {
                   className={({ isActive }) =>
                     isActive ? "nav-link-active" : ""
                   }
+                  onClick={handleNavLinkClick}
                 >
                   Pedidos
                 </NavLink>
               </li>
               <li>
-                <a onClick={handleLogoutClick}>
+                <a 
+                  onClick={() => {
+                    handleLogoutClick();
+                    handleNavLinkClick();
+                  }}
+                  style={{ cursor: 'pointer' }}
+                >
                 <FontAwesomeIcon icon={faArrowRightFromBracket} />
                 </a>
               </li>

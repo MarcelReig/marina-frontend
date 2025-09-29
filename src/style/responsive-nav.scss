@@ -94,6 +94,8 @@
     background-color: white;
     border-top: 1px solid black;
     display: none;
+    gap: 12px;
+    padding: 12px 0;
   }
 
   .navigation-menu li {
@@ -104,14 +106,66 @@
   .navigation-menu li a {
     color: black;
     width: 100%;
-    padding: 1.5rem 0;
+    padding: 1.8rem 1rem; // Adequate vertical and horizontal padding
+    margin: 0; // Use gap from the UL for separation
+    font-size: 1.1rem; // Larger font size for mobile
+    font-weight: 500; // Slightly bolder for better visibility
+    min-height: 60px; // Minimum touch target size
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
   }
 
   .navigation-menu li:hover {
-    background-color: #eee;
+    background-color: #f8f8f8;
+  }
+
+  .navigation-menu li:active {
+    background-color: #e8e8e8;
+    transform: scale(0.98); // Slight press effect
   }
 
   .navigation-menu.expanded ul {
-    display: block;
+    display: flex; // keep flex layout so gap works
+  }
+
+  // Special styling for logout button in mobile
+  .navigation-menu li:last-child {
+    a {
+      color: $charcoal;
+      font-size: 1.2rem;
+      padding: 2rem 1rem;
+
+      &:hover {
+        background-color: #f0f0f0;
+        color: $charcoal-light;
+      }
+
+      &:active {
+        background-color: #e0e0e0;
+      }
+    }
+  }
+
+  // Smooth animation for menu expansion
+  .navigation-menu ul {
+    transition: all 0.3s ease-in-out;
+  }
+
+  // Better visual separation and readability
+  .nav-link-wrapper {
+    .nav-link-active {
+      color: $charcoal !important;
+      font-weight: 600;
+    }
+  }
+
+  // Active link background that doesn't span full width
+  .navigation-menu li a.nav-link-active {
+    background-color: #f0f8ff;
+    background-clip: content-box; // shrink visual bg inside padding box
+    border-radius: 12px;
   }
 }
