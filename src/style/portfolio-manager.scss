@@ -1,8 +1,8 @@
 @use "variables" as *;
 
 .manager-wrapper {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
+  display: flex;
+  flex-direction: column;
   min-height: calc(100vh - 95px);
 
   .left-column {
@@ -12,9 +12,88 @@
 
   .right-column {
     background-color: $charcoal;
+    overflow-y: auto;
+  }
+}
+
+/* Manager Tabs - Mobile Navigation */
+.manager-tabs {
+  display: flex;
+  background: $charcoal;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.manager-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 20px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
+  position: relative;
+
+  svg {
+    font-size: 1.1rem;
+  }
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  &.active {
+    color: $offwhite;
+    border-bottom-color: $teal;
+    background: rgba(102, 178, 178, 0.1);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Mobile: Hide inactive tab content */
+@media (max-width: 767px) {
+  .manager-wrapper[data-active-tab="create"] .right-column {
+    display: none;
+  }
+
+  .manager-wrapper[data-active-tab="list"] .left-column {
+    display: none;
+  }
+
+  .left-column,
+  .right-column {
+    min-height: calc(100vh - 95px - 56px); // Subtract nav height + tabs height
+  }
+}
+
+/* Desktop: Side-by-side layout, hide tabs */
+@media (min-width: 768px) {
+  .manager-tabs {
+    display: none;
+  }
+
+  .manager-wrapper {
+    flex-direction: row;
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+  }
+
+  .manager-wrapper .right-column {
     position: sticky;
     top: 0;
     height: 100vh;
-    overflow-y: auto;
   }
 }

@@ -3,10 +3,12 @@ import { toast } from 'react-hot-toast';
 import http from "../../api/http";
 import InventoryForm from "../shop/InventoryForm";
 import InventorySidebarList from "../shop/InventorySidebarList";
+import ManagerTabs from "../shared/ManagerTabs";
 
 function InventoryManager() {
   const [items, setItems] = useState([]);
   const [error, setError] = useState("");
+  const [activeTab, setActiveTab] = useState("create");
 
   const fetchItems = () => {
     http
@@ -54,15 +56,32 @@ function InventoryManager() {
   };
 
   return (
-    <div className="manager-wrapper">
-      <div className="left-column">
-        <InventoryForm onSuccessfulSubmission={handleSuccess} onFormSubmissionError={handleError} />
-        {error && <div className="error">{error}</div>}
+    <>
+      <ManagerTabs 
+        activeTab={activeTab} 
+        onTabChange={setActiveTab}
+        createLabel="Crear Producto"
+        listLabel="Inventario"
+      />
+      <div className="manager-wrapper" data-active-tab={activeTab}>
+        <div className="left-column">
+          <InventoryForm 
+            onSuccessfulSubmission={(item) => {
+              handleSuccess(item);
+              // Switch to list tab on mobile after successful creation
+              if (window.innerWidth < 768) {
+                setActiveTab("list");
+              }
+            }} 
+            onFormSubmissionError={handleError} 
+          />
+          {error && <div className="error">{error}</div>}
+        </div>
+        <div className="right-column">
+          <InventorySidebarList data={items} onDeleteClick={handleDelete} onReorder={handleReorder} />
+        </div>
       </div>
-      <div className="right-column">
-        <InventorySidebarList data={items} onDeleteClick={handleDelete} onReorder={handleReorder} />
-      </div>
-    </div>
+    </>
   );
 }
 

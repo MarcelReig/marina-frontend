@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "../../context/useAuth";
 
 const Navbar = () => {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
 
   const navigate = useNavigate();
 
@@ -140,6 +140,19 @@ const Navbar = () => {
                   Pedidos
                 </NavLink>
               </li>
+              {user?.role === "super_admin" && (
+                <li className="nav-link-wrapper">
+                  <NavLink
+                    to="/user-manager"
+                    className={({ isActive }) =>
+                      isActive ? "nav-link-active" : ""
+                    }
+                    onClick={handleNavLinkClick}
+                  >
+                    User Manager
+                  </NavLink>
+                </li>
+              )}
               <li className="logout-item">
                 <a 
                   onClick={() => {

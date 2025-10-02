@@ -16,6 +16,7 @@ import InventoryEdit from "../components/pages/InventoryEdit";
 import Orders from "../components/pages/Orders";
 import CheckoutSuccess from "../components/pages/CheckoutSuccess";
 import CheckoutCancel from "../components/pages/CheckoutCancel";
+import UserManager from "../components/pages/UserManager";
 
 const Routes = () => {
   const router = createBrowserRouter([
@@ -82,6 +83,15 @@ const Routes = () => {
             {
               path: "/orders",
               element: <Orders />,
+            },
+          ],
+        },
+        {
+          element: <ProtectedRoute allowRoles={["super_admin"]} />,
+          children: [
+            {
+              path: "/user-manager",
+              element: <UserManager />,
             },
           ],
         },

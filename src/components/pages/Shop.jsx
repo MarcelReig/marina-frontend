@@ -4,6 +4,8 @@ import http from "../../api/http";
 import Header from "../shop/Header";
 import Product from "../shop/Product";
 import Order from "../shop/Order";
+import FloatingCartButton from "../shop/FloatingCartButton";
+import CartDrawer from "../shop/CartDrawer";
 import SkeletonShop from "../skeletons/SkeletonShop";
 import { toast } from 'react-hot-toast';
 
@@ -11,6 +13,7 @@ function Shop() {
   const [isLoading, setIsLoading] = useState(true);
   const [products, setProducts] = useState([]);
   const [order, setOrder] = useState({});
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -104,6 +107,19 @@ function Shop() {
     }).filter((it) => it.productId && it.quantity > 0);
   };
 
+  // Calculate cart totals for floating button
+  const cartTotals = useMemo(() => {
+    const ids = Object.keys(order || {});
+    const itemCount = ids.reduce((sum, key) => sum + (order[key] || 0), 0);
+    const total = ids.reduce((sum, key) => {
+      const product = productsMap[key];
+      const count = order[key];
+      if (!product) return sum;
+      return sum + count * product.price;
+    }, 0);
+    return { itemCount, total };
+  }, [order, productsMap]);
+
   if (isLoading) {
     return (
       <div className="marina-store">
@@ -116,13 +132,15 @@ function Shop() {
           <SkeletonShop />
           <SkeletonShop />
         </div>
-        <Order
-          products={productsMap}
-          order={order}
-          onRemoveFromOrder={removeFromOrder}
-          onIncrement={incrementItem}
-          onDecrement={decrementItem}
-        />
+        <div className="order-desktop">
+          <Order
+            products={productsMap}
+            order={order}
+            onRemoveFromOrder={removeFromOrder}
+            onIncrement={incrementItem}
+            onDecrement={decrementItem}
+          />
+        </div>
       </div>
     );
   }
@@ -137,7 +155,28 @@ function Shop() {
           ))}
         </ul>
       </div>
-      <Order
+      
+      {/* Desktop: sidebar cart */}
+      <div className="order-desktop">
+        <Order
+          products={productsMap}
+          order={order}
+          onRemoveFromOrder={removeFromOrder}
+          onIncrement={incrementItem}
+          onDecrement={decrementItem}
+        />
+      </div>
+
+      {/* Mobile: floating button + drawer */}
+      <FloatingCartButton
+        itemCount={cartTotals.itemCount}
+        total={cartTotals.total}
+        onClick={() => setIsDrawerOpen(true)}
+      />
+      
+      <CartDrawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
         products={productsMap}
         order={order}
         onRemoveFromOrder={removeFromOrder}

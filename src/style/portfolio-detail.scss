@@ -1,3 +1,5 @@
+@use "variables" as *;
+
 .portfolio-detail-wrapper {
   width: 100%;
   min-height: 100vh;
@@ -44,7 +46,7 @@
       color: #666;
 
       a {
-        color: #0066cc;
+        color: $teal;
         text-decoration: none;
 
         &:hover {
@@ -150,7 +152,7 @@
 
   .loading-state {
     svg {
-      color: #0066cc;
+      color: $teal;
       margin-bottom: 20px;
     }
   }
@@ -174,11 +176,11 @@
       display: inline-block;
 
       &:not(.btn-secondary) {
-        background: #0066cc;
+        background: $teal;
         color: white;
 
         &:hover {
-          background: #0052a3;
+          background: $dark-teal;
         }
       }
 

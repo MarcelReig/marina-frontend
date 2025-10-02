@@ -50,7 +50,7 @@
       }
 
       .edit-icon:hover {
-        color: #3498db;
+        color: $teal;
       }
 
       .delete-icon:hover {
@@ -225,8 +225,8 @@
 }
 
 .portfolio-item-thumb.is-drop-target {
-  background: rgba(52, 152, 219, 0.1);
-  border: 1px solid rgba(52, 152, 219, 0.3);
+  background: rgba(102, 178, 178, 0.1);
+  border: 1px solid rgba(102, 178, 178, 0.3);
 }
 
 /* Drop indicators */
@@ -235,7 +235,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: #3498db;
+  background: $teal;
   border-radius: 1px;
   z-index: 1001;
 
@@ -253,7 +253,7 @@
     left: 0;
     width: 6px;
     height: 6px;
-    background: #3498db;
+    background: $teal;
     border-radius: 50%;
     top: -2px;
   }
@@ -264,7 +264,7 @@
     right: 0;
     width: 6px;
     height: 6px;
-    background: #3498db;
+    background: $teal;
     border-radius: 50%;
     top: -2px;
   }
@@ -312,8 +312,8 @@
     color: rgba(255, 255, 255, 0.6);
 
     &:hover {
-      color: #3498db;
-      background-color: rgba(52, 152, 219, 0.15);
+      color: $teal;
+      background-color: rgba(102, 178, 178, 0.15);
     }
   }
 
@@ -330,8 +330,8 @@
 .reordering-indicator {
   margin-top: 8px;
   padding: 6px 12px;
-  background: rgba(52, 152, 219, 0.1);
-  color: #3498db;
+  background: rgba(102, 178, 178, 0.1);
+  color: $teal;
   border-radius: 4px;
   font-size: 0.85rem;
   text-align: center;
@@ -485,8 +485,8 @@
     color: rgba(255, 255, 255, 0.6);
 
     &:hover {
-      color: #3498db;
-      background-color: rgba(52, 152, 219, 0.15);
+      color: $teal;
+      background-color: rgba(102, 178, 178, 0.15);
     }
   }
 
