@@ -1,4 +1,4 @@
-import profilePicture from "../../images/bio/marina.jpeg";
+import profilePicture from "../../images/bio/about-marina.webp";
 
 function About() {
   return (
